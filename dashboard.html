@@ -1,0 +1,2792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic AI HEMS - Chat Interface</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #242424;
+            --bg-tertiary: #2d2d2d;
+            --bg-hover: #333333;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a1a1aa;
+            --border-color: #3f3f46;
+            --accent-color: #ffffff;
+            --accent-light: #f5f5f5;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        :root.light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f5f7fa;
+            --bg-tertiary: #ffffff;
+            --bg-hover: #f5f7fa;
+            --text-primary: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --border-color: #e1e8ed;
+            --accent-color: #2c3e50;
+            --accent-light: #1a202c;
+            --card-shadow: 0 2px 4px rgba(0,0,0,0.06);
+        }
+
+        body {
+            font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .logo {
+            margin-bottom: 48px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 12px 14px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            font-family: 'Courier New', monospace;
+        }
+
+        .logo:hover {
+            border-color: #4ade80;
+            background: var(--bg-tertiary);
+        }
+
+        .logo-prompt {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .logo-symbol {
+            color: #4ade80;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .logo-command {
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .logo-output {
+            color: var(--text-secondary);
+            font-size: 13px;
+            padding-left: 20px;
+        }
+
+        .nav-item {
+            padding: 16px 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-primary);
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .nav-item.active {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .nav-spacer-item {
+            height: 56px;
+            margin-bottom: 8px;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding-bottom: 24px;
+        }
+
+        .sidebar-footer {
+            padding: 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .license-info {
+            font-size: 11px;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+        }
+
+        .sidebar-separator {
+            height: 1px;
+            background: var(--border-color);
+            margin: 16px 12px;
+        }
+
+        .theme-toggle {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-primary);
+        }
+
+        .theme-toggle:hover {
+            background: var(--bg-hover);
+        }
+
+        .docs-button {
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: background 0.2s ease;
+        }
+
+        .docs-button:hover {
+            background: var(--bg-hover);
+        }
+
+        .copyright {
+            text-align: left;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        .sidebar-link {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 500;
+            text-decoration: underline;
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar-link:hover {
+            color: #4ade80;
+        }
+
+        /* Main content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Chat View */
+        #chat-view {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 16px;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .chat-message.user .chat-message-avatar {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-message-content {
+            background: var(--bg-tertiary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            max-width: 600px;
+            box-shadow: var(--card-shadow);
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+
+        .chat-message.user .chat-message-content {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-message-time {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+
+        .chat-thinking {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-thinking-header {
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: var(--text-secondary);
+            font-family: 'Manrope', sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .iteration-block {
+            margin-bottom: 20px;
+        }
+
+        .iteration-header {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .thought-block, .action-block, .observation-block {
+            margin-bottom: 8px;
+            padding: 14px 16px;
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .block-label {
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .block-label svg {
+            width: 14px;
+            height: 14px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .block-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .action-block .block-content {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: var(--bg-primary);
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chat-thinking::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-thinking::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-thinking::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .chat-thinking::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .streaming-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .streaming-indicator .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            animation: streamingDot 1.4s infinite;
+        }
+
+        .streaming-indicator .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .streaming-indicator .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes streamingDot {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .chat-welcome {
+            text-align: center;
+            padding: 60px 32px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .chat-welcome h2 {
+            font-size: 36px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .license-badge {
+            display: inline-block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .chat-welcome p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .chat-examples {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .chat-examples h3 {
+            grid-column: 1 / -1;
+            margin-top: 0;
+        }
+
+        .chat-examples h3:first-child {
+            margin-top: 0;
+        }
+
+        .chat-example {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+            text-align: left;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            min-height: 56px;
+            line-height: 1.4;
+        }
+
+        .chat-example:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .chat-loading {
+            display: flex;
+            gap: 8px;
+            padding: 4px;
+        }
+
+        .chat-loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            animation: loadingDot 1.4s infinite;
+        }
+
+        .chat-loading-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .chat-loading-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes loadingDot {
+            0%, 80%, 100% {
+                transform: scale(0);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .chat-input-container {
+            padding: 20px 32px 32px 32px;
+            background: transparent;
+        }
+
+        .chat-input-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .model-selector-wrapper {
+            position: relative;
+            min-width: 280px;
+        }
+
+        .model-selector {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-family: inherit;
+            height: 48px;
+            cursor: pointer;
+            min-width: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+
+        .model-selector:hover {
+            background: var(--bg-hover);
+        }
+
+        .model-selector-dropdown {
+            position: absolute;
+            bottom: 52px;
+            left: 0;
+            right: 0;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .model-selector-dropdown.open {
+            display: block;
+        }
+
+        .model-group {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .model-group:last-child {
+            border-bottom: none;
+        }
+
+        .model-group-header {
+            padding: 12px 18px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+        }
+
+        .model-group-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .model-group-toggle {
+            transition: transform 0.2s;
+        }
+
+        .model-group-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .model-group-options {
+            display: block;
+        }
+
+        .model-group-options.collapsed {
+            display: none;
+        }
+
+        .model-option {
+            padding: 12px 18px;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        .model-option:hover {
+            background: var(--bg-hover);
+        }
+
+        .model-option.selected {
+            background: var(--bg-secondary);
+            color: var(--accent-color);
+        }
+
+        .chat-input {
+            flex: 1;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 18px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            max-height: 200px;
+            min-height: 48px;
+            line-height: 1.5;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            overflow-y: auto;
+        }
+
+        .chat-input::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-input::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-input::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+
+        .chat-input::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--accent-color);
+        }
+
+        .chat-send-btn {
+            background: var(--accent-color);
+            color: var(--bg-primary);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            height: 48px;
+        }
+
+        .chat-send-btn:hover:not(:disabled) {
+            background: var(--accent-light);
+        }
+
+        .chat-send-btn:disabled {
+            background: #4a5568;
+            cursor: not-allowed;
+        }
+
+        /* Dashboard View */
+        #dashboard-view {
+            display: none;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .header {
+            margin-bottom: 0;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+
+        /* Metrics cards */
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .metric-card {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .metric-value.success {
+            color: var(--accent-color);
+        }
+
+        .metric-unit {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+        }
+
+        /* Charts */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+        }
+
+        /* Run table */
+        .run-table-card {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        td.prompt-cell {
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            position: relative;
+            cursor: help;
+        }
+
+        td.prompt-cell:hover::after {
+            content: attr(data-full-prompt);
+            position: absolute;
+            left: 0;
+            top: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 1000;
+            white-space: normal;
+            max-width: 400px;
+            word-wrap: break-word;
+            margin-top: 4px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        tr:hover {
+            background: var(--bg-hover);
+            cursor: pointer;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: rgba(46, 125, 50, 0.15);
+            color: var(--accent-light);
+        }
+
+        .status-failed {
+            background: rgba(220, 38, 38, 0.15);
+            color: #f87171;
+        }
+
+        /* Run details */
+        .run-details {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .detail-section h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .action-item {
+            background: var(--bg-tertiary);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .action-header {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .action-observation {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 8px;
+            padding-left: 16px;
+            border-left: 2px solid var(--border-color);
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            padding: 12px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin-top: 8px;
+            color: var(--text-primary);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        /* Dashboard Settings */
+        .dashboard-settings {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .setting-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .setting-group:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .setting-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .setting-selector {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .setting-selector:hover {
+            border-color: var(--accent-color);
+        }
+
+        .setting-selector:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Table filters */
+        .table-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-input {
+            flex: 1;
+            min-width: 200px;
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .filter-input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .filter-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: inherit;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .filter-select:hover {
+            border-color: var(--accent-color);
+        }
+
+        .filter-select:focus {
+            border-color: var(--accent-color);
+        }
+
+        .clear-filters-btn {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 18px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-color);
+        }
+
+        /* Sortable table headers */
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 24px;
+        }
+
+        th.sortable:hover {
+            color: var(--accent-color);
+        }
+
+        th.sortable::after {
+            content: '⇅';
+            position: absolute;
+            right: 8px;
+            opacity: 0.3;
+            font-size: 12px;
+        }
+
+        th.sortable.sort-asc::after {
+            content: '↑';
+            opacity: 1;
+        }
+
+        th.sortable.sort-desc::after {
+            content: '↓';
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo" onclick="resetChat()">
+                <div class="logo-prompt">
+                    <span class="logo-symbol">$</span>
+                    <span class="logo-command">./hems</span>
+                </div>
+                <div class="logo-output">[Agentic AI]</div>
+            </div>
+
+            <div class="nav-item active" onclick="showView('chat')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Chat</span>
+            </div>
+
+            <div class="nav-item" onclick="showView('dashboard')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <path d="M3 3h7v9H3zM14 3h7v5h-7zM14 12h7v9h-7zM3 16h7v5H3z"></path>
+                </svg>
+                <span>Analytics</span>
+            </div>
+
+            <div class="nav-item" onclick="showView('details')">
+                <svg class="nav-icon" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <span>Run Details</span>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="sidebar-footer">
+                    <div class="license-info">Open Source • MIT License</div>
+                    <div class="copyright">© 2025 Reda El Makroum</div>
+                    <a href="https://redaelmakroum.dev" target="_blank" class="sidebar-link">redaelmakroum.dev</a>
+                </div>
+
+                <div class="sidebar-separator"></div>
+
+                <div class="theme-toggle" onclick="toggleTheme()" id="theme-toggle">
+                <svg class="nav-icon" viewBox="0 0 24 24" id="theme-icon-sun" style="display: none;">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="nav-icon" viewBox="0 0 24 24" id="theme-icon-moon">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span id="theme-label">Light Mode</span>
+                </div>
+
+                <a href="https://github.com/redaelmakroum/agentic-ai-hems" target="_blank" class="docs-button">
+                    <svg class="nav-icon" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                    <span>Documentation</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Chat View (Default) -->
+            <div id="chat-view">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="chat-welcome">
+                        <h2>Agentic AI HEMS Simulation</h2>
+                        <p>This system uses a ReAct-based orchestrator to coordinate specialist agents for optimal scheduling of residential flexible loads. The Agentic AI architecture leverages day-ahead electricity prices to minimize operational costs while respecting technical and comfort constraints.</p>
+
+                        <div class="chat-examples">
+                            <h3 style="font-size: 16px; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Single Appliance</h3>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Schedule the washing machine
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Optimize dishwasher for cost
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Schedule EV charging before work tomorrow
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                When should I run the washing machine?
+                            </div>
+
+                            <h3 style="font-size: 16px; color: var(--text-secondary); margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Multiple Appliances</h3>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Schedule all my loads tomorrow
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Schedule all flexible loads
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Schedule washing machine and dishwasher
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Run all appliances at cheapest times
+                            </div>
+
+                            <h3 style="font-size: 16px; color: var(--text-secondary); margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Natural Language Variations</h3>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                What 3 hour timeslot should I avoid consuming at tomorrow?
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                I need to charge my car overnight
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                Minimize my energy costs today
+                            </div>
+                            <div class="chat-example" onclick="useExample(this.textContent)">
+                                When are the peak price hours tomorrow?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <div class="chat-input-wrapper">
+                        <div class="model-selector-wrapper">
+                            <div class="model-selector" id="model-selector" onclick="toggleModelDropdown()">
+                                <span id="selected-model-display">llama3.1-8b</span>
+                                <span>▼</span>
+                            </div>
+                            <div class="model-selector-dropdown" id="model-dropdown">
+                                <div class="model-group">
+                                    <div class="model-group-header">
+                                        <span>Recommended for Research</span>
+                                    </div>
+                                    <div class="model-group-options">
+                                        <div class="model-option" data-value="llama-3.3-70b" onclick="selectModel(this)">
+                                            llama-3.3-70b <span style="color: var(--text-secondary);">Tool calling</span>
+                                        </div>
+                                        <div class="model-option" data-value="gpt-oss-120b" onclick="selectModel(this)">
+                                            gpt-oss-120b <span style="color: var(--text-secondary);">120B params</span>
+                                        </div>
+                                        <div class="model-option" data-value="qwen-3-32b" onclick="selectModel(this)">
+                                            qwen-3-32b <span style="color: var(--text-secondary);">Balanced</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="model-group">
+                                    <div class="model-group-header" onclick="toggleModelGroup(this)">
+                                        <span>Other Models</span>
+                                        <span class="model-group-toggle collapsed">▼</span>
+                                    </div>
+                                    <div class="model-group-options collapsed">
+                                        <div class="model-option selected" data-value="llama3.1-8b" onclick="selectModel(this)">
+                                            llama3.1-8b <span style="color: var(--text-secondary);">Fast</span>
+                                        </div>
+                                        <div class="model-option" data-value="llama-4-maverick-17b-128e-instruct" onclick="selectModel(this)">
+                                            llama-4-maverick-17b
+                                        </div>
+                                        <div class="model-option" data-value="llama-4-scout-17b-16e-instruct" onclick="selectModel(this)">
+                                            llama-4-scout-17b
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <textarea
+                            class="chat-input"
+                            id="chat-input"
+                            placeholder="Enter your scheduling request..."
+                            rows="1"
+                            onkeydown="handleChatKeyDown(event)"
+                        ></textarea>
+                        <button class="chat-send-btn" id="chat-send-btn" onclick="handleSendClick()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view">
+                <div class="header">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                        <div>
+                            <h1>Analytics Dashboard</h1>
+                            <p>Agentic AI system performance monitoring and analysis</p>
+                        </div>
+                        <div class="dashboard-settings">
+                            <div class="setting-group">
+                                <span class="setting-label">Display</span>
+                                <select id="display-limit-selector" onchange="updateDisplayLimit()" class="setting-selector">
+                                    <option value="10">Last 10</option>
+                                    <option value="20" selected>Last 20</option>
+                                    <option value="50">Last 50</option>
+                                    <option value="100">Last 100</option>
+                                    <option value="all">All Runs</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Metrics -->
+                <div class="metrics">
+                    <div class="metric-card">
+                        <div class="metric-label">Total Runs</div>
+                        <div class="metric-value" id="total-runs">0</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Success Rate</div>
+                        <div class="metric-value success" id="success-rate">0<span class="metric-unit">%</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Avg Duration</div>
+                        <div class="metric-value" id="avg-duration">0<span class="metric-unit">s</span></div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">Avg Tokens</div>
+                        <div class="metric-value" id="avg-tokens">0<span class="metric-unit">k</span></div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="charts">
+                    <div class="chart-card">
+                        <div class="chart-title">Execution Time Trend</div>
+                        <canvas id="costChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title">Token Usage Trend</div>
+                        <canvas id="tokenChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Runs Table -->
+                <div class="run-table-card">
+                    <div class="chart-title" id="runs-table-title">Recent Test Runs (Last 20)</div>
+
+                    <!-- Table Filters -->
+                    <div class="table-filters">
+                        <input
+                            type="text"
+                            id="search-prompt"
+                            class="filter-input"
+                            placeholder="Search prompts..."
+                            oninput="applyFilters()"
+                        >
+                        <select id="filter-model" class="filter-select" onchange="applyFilters()">
+                            <option value="">All Models</option>
+                        </select>
+                        <select id="filter-status" class="filter-select" onchange="applyFilters()">
+                            <option value="">All Status</option>
+                            <option value="success">Success</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                        <button class="clear-filters-btn" onclick="clearFilters()">Clear Filters</button>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="timestamp" onclick="sortTable('timestamp')">Timestamp</th>
+                                <th class="sortable" data-sort="model" onclick="sortTable('model')">Model</th>
+                                <th>Prompt</th>
+                                <th class="sortable" data-sort="status" onclick="sortTable('status')">Status</th>
+                                <th class="sortable" data-sort="appliances" onclick="sortTable('appliances')">Appliances</th>
+                                <th class="sortable" data-sort="duration" onclick="sortTable('duration')">Duration</th>
+                                <th class="sortable" data-sort="iterations" onclick="sortTable('iterations')">Iterations</th>
+                                <th class="sortable" data-sort="tokens" onclick="sortTable('tokens')">Tokens</th>
+                            </tr>
+                        </thead>
+                        <tbody id="runs-table-body">
+                            <tr><td colspan="8" class="loading">Loading runs...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Run Details Section -->
+            <div id="details-section" style="display: none; padding: 30px; overflow-y: auto;">
+                <div class="header" style="margin-bottom: 24px;">
+                    <h1>Latest Run Details</h1>
+                </div>
+                <div id="run-details-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allRuns = [];
+        let filteredRuns = [];
+        let costChart, tokenChart;
+        let hotReloadEnabled = true;
+        let lastModified = null;
+        let currentView = 'chat';
+        let hasUserMessages = false;
+        let userHasScrolledUp = false;
+        let displayLimit = parseInt(localStorage.getItem('displayLimit')) || 20;
+        let currentSortColumn = 'timestamp';
+        let currentSortDirection = 'desc';
+
+        // Theme management - Dark mode is default
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            const theme = savedTheme || 'dark'; // Default to dark
+
+            if (theme === 'light') {
+                document.documentElement.classList.add('light');
+                document.getElementById('theme-icon-sun').style.display = 'none';
+                document.getElementById('theme-icon-moon').style.display = 'block';
+                document.getElementById('theme-label').textContent = 'Dark Mode';
+            } else {
+                document.documentElement.classList.remove('light');
+                document.getElementById('theme-icon-sun').style.display = 'block';
+                document.getElementById('theme-icon-moon').style.display = 'none';
+                document.getElementById('theme-label').textContent = 'Light Mode';
+            }
+
+            if (!savedTheme) {
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function toggleTheme() {
+            const isLight = document.documentElement.classList.contains('light');
+
+            if (isLight) {
+                // Switch to dark
+                document.documentElement.classList.remove('light');
+                document.getElementById('theme-icon-sun').style.display = 'block';
+                document.getElementById('theme-icon-moon').style.display = 'none';
+                document.getElementById('theme-label').textContent = 'Light Mode';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                // Switch to light
+                document.documentElement.classList.add('light');
+                document.getElementById('theme-icon-sun').style.display = 'none';
+                document.getElementById('theme-icon-moon').style.display = 'block';
+                document.getElementById('theme-label').textContent = 'Dark Mode';
+                localStorage.setItem('theme', 'light');
+            }
+
+            // Update charts if they exist
+            if (costChart || tokenChart) {
+                updateChartColors();
+            }
+        }
+
+        function updateChartColors() {
+            const isLight = document.documentElement.classList.contains('light');
+            const textColor = isLight ? '#2c3e50' : '#e4e4e7';
+
+            Chart.defaults.color = textColor;
+            Chart.defaults.borderColor = isLight ? '#e1e8ed' : '#3f3f46';
+
+            if (costChart) {
+                costChart.options.scales.y.ticks.color = textColor;
+                costChart.options.scales.x.ticks.color = textColor;
+                costChart.options.scales.y.grid.color = isLight ? '#e1e8ed' : '#3f3f46';
+                costChart.options.scales.x.grid.color = isLight ? '#e1e8ed' : '#3f3f46';
+                costChart.update();
+            }
+
+            if (tokenChart) {
+                tokenChart.options.scales.y.ticks.color = textColor;
+                tokenChart.options.scales.x.ticks.color = textColor;
+                tokenChart.options.scales.y.grid.color = isLight ? '#e1e8ed' : '#3f3f46';
+                tokenChart.options.scales.x.grid.color = isLight ? '#e1e8ed' : '#3f3f46';
+                tokenChart.update();
+            }
+        }
+
+        // View switching
+        function showView(view) {
+            currentView = view;
+
+            // Hide all views
+            document.getElementById('chat-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('details-section').style.display = 'none';
+
+            // Show selected view
+            if (view === 'chat') {
+                document.getElementById('chat-view').style.display = 'flex';
+            } else if (view === 'dashboard') {
+                document.getElementById('dashboard-view').style.display = 'block';
+                loadRunData(); // Refresh data when viewing dashboard
+            } else if (view === 'details') {
+                if (allRuns.length > 0) {
+                    showRunDetails(allRuns[0].timestamp);
+                } else {
+                    loadRunData().then(() => {
+                        if (allRuns.length > 0) {
+                            showRunDetails(allRuns[0].timestamp);
+                        }
+                    });
+                }
+            }
+
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.closest('.nav-item').classList.add('active');
+        }
+
+        // Load and display data
+        async function loadRunData() {
+            try {
+                console.log('[Dashboard] Loading run data...');
+
+                // First, get list of model subdirectories
+                const response = await fetch('data/runs/');
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const modelDirs = Array.from(doc.querySelectorAll('a'))
+                    .map(a => a.getAttribute('href'))
+                    .filter(href => href && href.endsWith('/') && href !== '../')
+                    .map(href => href.replace('/', ''));
+
+                console.log('[Dashboard] Found model directories:', modelDirs);
+
+                // Load runs from all model subdirectories
+                const allRunFiles = [];
+                for (const modelDir of modelDirs) {
+                    try {
+                        const modelResponse = await fetch(`data/runs/${modelDir}/`);
+                        const modelHtml = await modelResponse.text();
+                        const modelDoc = parser.parseFromString(modelHtml, 'text/html');
+
+                        const jsonFiles = Array.from(modelDoc.querySelectorAll('a'))
+                            .map(a => a.getAttribute('href'))
+                            .filter(href => href && href.endsWith('.json'))
+                            .map(file => `${modelDir}/${file}`);
+
+                        allRunFiles.push(...jsonFiles);
+                    } catch (e) {
+                        console.warn(`[Dashboard] Could not load runs from ${modelDir}:`, e);
+                    }
+                }
+
+                console.log('[Dashboard] Found', allRunFiles.length, 'run files across all models');
+
+                const runs = await Promise.all(
+                    allRunFiles.map(async file => {
+                        const res = await fetch(`data/runs/${file}`);
+                        return await res.json();
+                    })
+                );
+
+                allRuns = runs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                filteredRuns = [...allRuns];
+                console.log('[Dashboard] Loaded', allRuns.length, 'runs successfully');
+                loadDisplayLimitPreference();
+                populateModelFilter();
+                updateDashboard();
+            } catch (error) {
+                console.error('[Dashboard] ❌ Error loading runs:', error);
+            }
+        }
+
+        function updateDashboard() {
+            if (allRuns.length === 0) {
+                document.getElementById('runs-table-body').innerHTML =
+                    '<tr><td colspan="8" class="loading">No test runs found. Run some tests first!</td></tr>';
+                return;
+            }
+
+            if (filteredRuns.length === 0) {
+                document.getElementById('runs-table-body').innerHTML =
+                    '<tr><td colspan="8" class="loading">No runs match your filters.</td></tr>';
+            }
+
+            updateMetrics();
+            updateCharts();
+            updateRunsTable();
+        }
+
+        function updateMetrics() {
+            const runsToUse = filteredRuns.length > 0 ? filteredRuns : allRuns;
+            const successfulRuns = runsToUse.filter(r => r.success);
+            const successRate = runsToUse.length > 0 ? (successfulRuns.length / runsToUse.length) * 100 : 0;
+            const avgDuration = runsToUse.length > 0 ? runsToUse.reduce((sum, r) => sum + (r.duration_seconds || 0), 0) / runsToUse.length : 0;
+            const avgTokens = runsToUse.length > 0 ? runsToUse.reduce((sum, r) => sum + r.total_tokens, 0) / runsToUse.length : 0;
+
+            document.getElementById('total-runs').textContent = runsToUse.length;
+            document.getElementById('success-rate').textContent = successRate.toFixed(0);
+            document.getElementById('avg-duration').innerHTML = `${avgDuration.toFixed(1)}<span class="metric-unit">s</span>`;
+            document.getElementById('avg-tokens').innerHTML = `${(avgTokens / 1000).toFixed(1)}<span class="metric-unit">k</span>`;
+        }
+
+        function updateDisplayLimit() {
+            const selector = document.getElementById('display-limit-selector');
+            const value = selector.value;
+
+            if (value === 'all') {
+                displayLimit = allRuns.length;
+            } else {
+                displayLimit = parseInt(value);
+            }
+
+            localStorage.setItem('displayLimit', displayLimit);
+            updateDashboard();
+        }
+
+        function updateCharts() {
+            const limit = displayLimit === 'all' ? allRuns.length : displayLimit;
+            const displayRuns = allRuns.slice(0, limit).reverse();
+            const labels = displayRuns.map((r, i) => `Run ${i + 1}`);
+            const durations = displayRuns.map(r => r.duration_seconds || 0);
+            const tokens = displayRuns.map(r => r.total_tokens / 1000);
+
+            const isLight = document.documentElement.classList.contains('light');
+            const textColor = isLight ? '#2c3e50' : '#e4e4e7';
+            const gridColor = isLight ? '#e1e8ed' : '#3f3f46';
+
+            const costCtx = document.getElementById('costChart').getContext('2d');
+            if (costChart) costChart.destroy();
+            costChart = new Chart(costCtx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Execution Time (s)',
+                        data: durations,
+                        borderColor: '#2e7d32',
+                        backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        }
+                    }
+                }
+            });
+
+            const tokenCtx = document.getElementById('tokenChart').getContext('2d');
+            if (tokenChart) tokenChart.destroy();
+            tokenChart = new Chart(tokenCtx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Tokens (k)',
+                        data: tokens,
+                        backgroundColor: '#2e7d32'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateRunsTable() {
+            const tbody = document.getElementById('runs-table-body');
+            const limit = displayLimit === 'all' ? filteredRuns.length : displayLimit;
+            const displayRuns = filteredRuns.slice(0, limit);
+
+            // Update table title
+            const titleText = displayLimit === filteredRuns.length ?
+                `Recent Test Runs (All ${filteredRuns.length})` :
+                `Recent Test Runs (Last ${Math.min(limit, filteredRuns.length)})`;
+            document.getElementById('runs-table-title').textContent = titleText;
+
+            tbody.innerHTML = displayRuns.map(run => {
+                const timestamp = new Date(run.timestamp).toLocaleString('en-GB', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+                const model = run.model || 'unknown';
+                const prompt = (run.user_request || '');
+                const status = run.success ?
+                    '<span class="status-badge status-success">Success</span>' :
+                    '<span class="status-badge status-failed">Failed</span>';
+                const appliances = run.appliances_scheduled.join(', ').substring(0, 30) + '...';
+                const duration = (run.duration_seconds || 0).toFixed(1);
+
+                return `
+                    <tr onclick="showRunDetails('${run.timestamp}')">
+                        <td>${timestamp}</td>
+                        <td>${model}</td>
+                        <td class="prompt-cell" data-full-prompt="${escapeHtml(prompt)}">${prompt}</td>
+                        <td>${status}</td>
+                        <td>${run.num_appliances} (${appliances})</td>
+                        <td>${duration}s</td>
+                        <td>${run.iterations}</td>
+                        <td>${(run.total_tokens / 1000).toFixed(1)}k</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showRunDetails(timestamp) {
+            const run = allRuns.find(r => r.timestamp === timestamp);
+            if (!run) return;
+
+            document.getElementById('chat-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('details-section').style.display = 'block';
+
+            const content = document.getElementById('run-details-content');
+            content.innerHTML = `
+                <div class="run-details">
+                    <h2>${new Date(run.timestamp).toLocaleString()}</h2>
+                    <p><strong>Request:</strong> ${run.user_request}</p>
+                    <p><strong>Status:</strong> ${run.success ? '✓ Success' : '✗ Failed'}</p>
+                </div>
+
+                <div class="run-details">
+                    <div class="detail-section">
+                        <h3>ReAct Execution Trace</h3>
+                        ${run.actions_taken.map((action, i) => `
+                            <div class="action-item">
+                                <div class="action-header">
+                                    Iteration ${action.iteration}: ${action.action.type}
+                                </div>
+                                <div class="code-block">
+                                    ${JSON.stringify(action.action, null, 2)}
+                                </div>
+                                <div class="action-observation">
+                                    <strong>Observation:</strong> ${action.observation}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="run-details">
+                    <div class="detail-section">
+                        <h3>Agent Results</h3>
+                        ${Object.entries(run.agent_results || {}).map(([agent, result]) => `
+                            <div class="action-item">
+                                <div class="action-header">${agent}</div>
+                                <div class="code-block">${JSON.stringify(result, null, 2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="run-details">
+                    <div class="detail-section">
+                        <h3>Executed Schedules</h3>
+                        ${run.executed_schedules.map(s => `
+                            <div class="action-item">
+                                <div class="action-header">${s.appliance_id}</div>
+                                <div class="code-block">${JSON.stringify(s.schedule, null, 2)}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+
+        async function checkForHotReload() {
+            if (!hotReloadEnabled) return;
+
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                });
+                const modified = response.headers.get('Last-Modified');
+
+                if (lastModified === null) {
+                    lastModified = modified;
+                } else if (modified !== lastModified) {
+                    console.log('Dashboard updated, reloading...');
+                    window.location.reload();
+                }
+            } catch (error) {
+                console.log('Hot reload check failed:', error);
+            }
+        }
+
+        // Model selector functions
+        let currentSelectedModel = 'llama3.1-8b';
+        let modelsLoaded = false;
+
+        // Track recently used models (stored in localStorage)
+        function getRecentlyUsedModels() {
+            const stored = localStorage.getItem('recentlyUsedModels');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function addToRecentlyUsed(modelId) {
+            let recent = getRecentlyUsedModels();
+
+            // Remove if already exists (to move to front)
+            recent = recent.filter(id => id !== modelId);
+
+            // Add to front
+            recent.unshift(modelId);
+
+            // Keep only last 10 models
+            recent = recent.slice(0, 10);
+
+            localStorage.setItem('recentlyUsedModels', JSON.stringify(recent));
+            console.log('[Dashboard] Updated recently used models:', recent);
+        }
+
+        // Fallback hardcoded models (used if API fails)
+        const FALLBACK_MODELS = {
+            most_used: [],
+            newest: [
+                { id: 'llama-3.3-70b' },
+                { id: 'gpt-oss-120b' },
+                { id: 'qwen-3-32b' }
+            ],
+            other: [
+                { id: 'llama3.1-8b' },
+                { id: 'llama-4-maverick-17b-128e-instruct' },
+                { id: 'llama-4-scout-17b-16e-instruct' }
+            ]
+        };
+
+        async function loadAvailableModels() {
+            if (modelsLoaded) return;
+
+            try {
+                console.log('[Dashboard] Fetching available models from API...');
+
+                // Get recently used models from localStorage
+                const recentlyUsed = getRecentlyUsedModels();
+                const recentlyUsedParam = recentlyUsed.join(',');
+
+                const response = await fetch(`http://localhost:5000/api/models?recently_used=${encodeURIComponent(recentlyUsedParam)}`);
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.success) {
+                        console.log('[Dashboard] Loaded models from API:', data);
+                        populateModelDropdown(data.most_used, data.newest, data.other);
+                        modelsLoaded = true;
+                        return;
+                    }
+                }
+
+                // If API call failed, use fallback
+                console.warn('[Dashboard] API call failed, using fallback models');
+                populateModelDropdown(FALLBACK_MODELS.most_used, FALLBACK_MODELS.newest, FALLBACK_MODELS.other);
+                modelsLoaded = true;
+
+            } catch (error) {
+                console.warn('[Dashboard] Error fetching models, using fallback:', error);
+                populateModelDropdown(FALLBACK_MODELS.most_used, FALLBACK_MODELS.newest, FALLBACK_MODELS.other);
+                modelsLoaded = true;
+            }
+        }
+
+        function populateModelDropdown(mostUsed, newest, other) {
+            const dropdown = document.getElementById('model-dropdown');
+
+            // Build HTML for most used models
+            let mostUsedHTML = '';
+            mostUsed.forEach(model => {
+                const isSelected = model.id === currentSelectedModel ? 'selected' : '';
+                mostUsedHTML += `
+                    <div class="model-option ${isSelected}" data-value="${model.id}" onclick="selectModel(this)">
+                        ${model.id}
+                    </div>
+                `;
+            });
+
+            // Build HTML for newest models
+            let newestHTML = '';
+            newest.forEach(model => {
+                const isSelected = model.id === currentSelectedModel ? 'selected' : '';
+                newestHTML += `
+                    <div class="model-option ${isSelected}" data-value="${model.id}" onclick="selectModel(this)">
+                        ${model.id}
+                    </div>
+                `;
+            });
+
+            // Build HTML for other models
+            let otherHTML = '';
+            other.forEach(model => {
+                const isSelected = model.id === currentSelectedModel ? 'selected' : '';
+                otherHTML += `
+                    <div class="model-option ${isSelected}" data-value="${model.id}" onclick="selectModel(this)">
+                        ${model.id}
+                    </div>
+                `;
+            });
+
+            // Build dropdown with conditional sections
+            let dropdownHTML = '';
+
+            // Most Used section (only show if there are models)
+            if (mostUsed.length > 0) {
+                dropdownHTML += `
+                    <div class="model-group">
+                        <div class="model-group-header">
+                            <span>Recently Used</span>
+                        </div>
+                        <div class="model-group-options">
+                            ${mostUsedHTML}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Newest section (always show)
+            dropdownHTML += `
+                <div class="model-group">
+                    <div class="model-group-header">
+                        <span>Newest Models</span>
+                    </div>
+                    <div class="model-group-options">
+                        ${newestHTML}
+                    </div>
+                </div>
+            `;
+
+            // Other section (collapsible)
+            dropdownHTML += `
+                <div class="model-group">
+                    <div class="model-group-header" onclick="toggleModelGroup(this)">
+                        <span>Other Models</span>
+                        <span class="model-group-toggle collapsed">▼</span>
+                    </div>
+                    <div class="model-group-options collapsed">
+                        ${otherHTML}
+                    </div>
+                </div>
+            `;
+
+            dropdown.innerHTML = dropdownHTML;
+
+            // Restore selected model highlighting
+            loadModelPreference();
+        }
+
+        function toggleModelDropdown() {
+            const dropdown = document.getElementById('model-dropdown');
+            dropdown.classList.toggle('open');
+        }
+
+        function toggleModelGroup(header) {
+            const toggle = header.querySelector('.model-group-toggle');
+            const options = header.nextElementSibling;
+
+            toggle.classList.toggle('collapsed');
+            options.classList.toggle('collapsed');
+        }
+
+        function selectModel(option) {
+            const value = option.getAttribute('data-value');
+            const display = option.textContent.trim();
+
+            // Update selected state
+            document.querySelectorAll('.model-option').forEach(opt => opt.classList.remove('selected'));
+            option.classList.add('selected');
+
+            // Update display
+            document.getElementById('selected-model-display').textContent = value;
+
+            // Save preference
+            currentSelectedModel = value;
+            localStorage.setItem('selectedModel', value);
+
+            // Add to recently used models
+            addToRecentlyUsed(value);
+
+            console.log('[Dashboard] Model changed to:', value);
+
+            // Close dropdown
+            document.getElementById('model-dropdown').classList.remove('open');
+
+            // Reload models to update categories (but don't show loading)
+            modelsLoaded = false;
+            loadAvailableModels();
+        }
+
+        function loadModelPreference() {
+            const savedModel = localStorage.getItem('selectedModel');
+            if (savedModel) {
+                currentSelectedModel = savedModel;
+                document.getElementById('selected-model-display').textContent = savedModel;
+
+                // Update selected state in dropdown
+                document.querySelectorAll('.model-option').forEach(opt => {
+                    if (opt.getAttribute('data-value') === savedModel) {
+                        opt.classList.add('selected');
+                    } else {
+                        opt.classList.remove('selected');
+                    }
+                });
+
+                console.log('[Dashboard] Loaded saved model:', savedModel);
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('model-dropdown');
+            const selector = document.getElementById('model-selector');
+
+            if (dropdown && selector && !selector.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.remove('open');
+            }
+        });
+
+        // Chat functions
+        function useExample(text) {
+            document.getElementById('chat-input').value = text.trim();
+            document.getElementById('chat-input').focus();
+        }
+
+        // Helper function to check if user is at bottom of chat
+        function isUserAtBottom(container) {
+            const threshold = 100; // pixels from bottom
+            return container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
+        }
+
+        // Auto-scroll only if user hasn't scrolled up
+        function smartAutoScroll(container) {
+            if (!userHasScrolledUp) {
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Add scroll listener to detect manual scrolling
+        document.addEventListener('DOMContentLoaded', () => {
+            const messagesContainer = document.getElementById('chat-messages');
+            if (messagesContainer) {
+                messagesContainer.addEventListener('scroll', () => {
+                    userHasScrolledUp = !isUserAtBottom(messagesContainer);
+                });
+            }
+        });
+
+        function handleSendClick() {
+            const sendBtn = document.getElementById('chat-send-btn');
+            if (sendBtn.textContent === 'Send') {
+                sendMessage();
+            } else {
+                resetChat();
+            }
+        }
+
+        function handleChatKeyDown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleSendClick();
+            }
+            // Shift+Enter allows new line (default browser behavior)
+        }
+
+        function resetChat() {
+            const messagesContainer = document.getElementById('chat-messages');
+            const sendBtn = document.getElementById('chat-send-btn');
+            const input = document.getElementById('chat-input');
+
+            // Reset scroll tracking
+            userHasScrolledUp = false;
+
+            // Clear all messages
+            messagesContainer.innerHTML = `
+                <div class="chat-welcome">
+                    <h2>Agentic AI HEMS Simulation</h2>
+                    <p>This system uses a ReAct-based orchestrator to coordinate specialist agents for optimal scheduling of residential flexible loads. The Agentic AI architecture leverages day-ahead electricity prices to minimize operational costs while respecting technical and comfort constraints.</p>
+
+                    <div class="chat-examples">
+                        <h3 style="font-size: 16px; color: var(--text-secondary); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Single Appliance</h3>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Schedule the washing machine
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Optimize dishwasher for cost
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Schedule EV charging before work tomorrow
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Minimize my heating costs for tomorrow
+                        </div>
+
+                        <h3 style="font-size: 16px; color: var(--text-secondary); margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Multiple Appliances</h3>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Schedule all my loads tomorrow
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Schedule all flexible loads
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Schedule washing machine and dishwasher
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Run all appliances at cheapest times
+                        </div>
+
+                        <h3 style="font-size: 16px; color: var(--text-secondary); margin-top: 24px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Natural Language Variations</h3>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            What 3 hour timeslot should I avoid consuming at tomorrow?
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            I need to charge my car overnight
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            Minimize my energy costs today
+                        </div>
+                        <div class="chat-example" onclick="useExample(this.textContent)">
+                            When are the peak price hours tomorrow?
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Reset button (text only, onclick handler stays from HTML)
+            sendBtn.textContent = 'Send';
+
+            // Reset state
+            hasUserMessages = false;
+
+            // Clear and focus input
+            input.value = '';
+            input.focus();
+        }
+
+        function addChatMessage(content, isUser = false, thinking = null) {
+            const messagesContainer = document.getElementById('chat-messages');
+
+            // Remove welcome message if this is the first user message
+            if (isUser && !hasUserMessages) {
+                const welcome = messagesContainer.querySelector('.chat-welcome');
+                if (welcome) {
+                    welcome.remove();
+                }
+                hasUserMessages = true;
+            }
+
+            const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'user' : ''}`;
+
+            const userAvatar = `<svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>`;
+
+            const botAvatar = `<svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="8" cy="15" r="1"></circle>
+                <circle cx="16" cy="15" r="1"></circle>
+                <path d="M9 7h6M12 7V3"></path>
+            </svg>`;
+
+            const thinkingSection = thinking ? `
+                <div class="chat-thinking">
+                    <div class="chat-thinking-header">Agent Execution Trace</div>
+                    ${thinking}
+                </div>
+            ` : '';
+
+            messageDiv.innerHTML = `
+                <div class="chat-message-avatar">${isUser ? userAvatar : botAvatar}</div>
+                <div>
+                    <div class="chat-message-content">
+                        ${content}
+                        ${thinkingSection}
+                    </div>
+                    <div class="chat-message-time">${time}</div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            smartAutoScroll(messagesContainer);
+
+            return messageDiv;
+        }
+
+        function addLoadingIndicator() {
+            const messagesContainer = document.getElementById('chat-messages');
+
+            const botAvatar = `<svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="8" cy="15" r="1"></circle>
+                <circle cx="16" cy="15" r="1"></circle>
+                <path d="M9 7h6M12 7V3"></path>
+            </svg>`;
+
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'chat-message';
+            loadingDiv.id = 'chat-loading-indicator';
+            loadingDiv.innerHTML = `
+                <div class="chat-message-avatar">${botAvatar}</div>
+                <div>
+                    <div class="chat-message-content">
+                        <div class="chat-loading">
+                            <div class="chat-loading-dot"></div>
+                            <div class="chat-loading-dot"></div>
+                            <div class="chat-loading-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            messagesContainer.appendChild(loadingDiv);
+            smartAutoScroll(messagesContainer);
+
+            return loadingDiv;
+        }
+
+        function removeLoadingIndicator() {
+            const loading = document.getElementById('chat-loading-indicator');
+            if (loading) {
+                loading.remove();
+            }
+        }
+
+        // ReAct output parsing functions
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        function parseReActOutput(output) {
+            const iterations = [];
+            const iterationBlocks = output.split(/(?=Iteration \d+)/);
+
+            iterationBlocks.forEach(block => {
+                const iterMatch = block.match(/Iteration (\d+)/);
+                if (!iterMatch) return;
+
+                const iterNum = iterMatch[1];
+                const iteration = { number: iterNum, thought: '', action: '', observation: '' };
+
+                // Extract thought
+                const thoughtMatch = block.match(/\[LLM Thought\/Action\]:\s*Thought:\s*([\s\S]*?)(?=ACTION:|$)/);
+                if (thoughtMatch) {
+                    iteration.thought = cleanTerminalFormatting(thoughtMatch[1].trim());
+                }
+
+                // Extract action
+                const actionMatch = block.match(/ACTION:\s*(\S+)/);
+                if (actionMatch) {
+                    iteration.action = actionMatch[1];
+                }
+
+                // Extract observation
+                const obsMatch = block.match(/\[Observation\]:\s*([\s\S]*?)(?=\n\n\n|Iteration|\[Action\]|$)/);
+                if (obsMatch) {
+                    iteration.observation = cleanTerminalFormatting(obsMatch[1].trim());
+                }
+
+                if (iteration.thought || iteration.action || iteration.observation) {
+                    iterations.push(iteration);
+                }
+            });
+
+            return iterations;
+        }
+
+        function cleanTerminalFormatting(text) {
+            return text
+                // Remove lines with only equal signs
+                .replace(/^=+$/gm, '')
+                // Remove lines with equal signs and text (like section headers)
+                .replace(/^=+\s+.*?\s+=+$/gm, '')
+                // Remove token usage sections
+                .replace(/TOKEN USAGE.*$/s, '')
+                // Remove [Saved] lines
+                .replace(/\[Saved\].*$/gm, '')
+                // Remove multiple consecutive newlines
+                .replace(/\n{3,}/g, '\n\n')
+                // Trim whitespace
+                .trim();
+        }
+
+        function renderIterations(iterations) {
+            let html = '';
+            iterations.forEach(iter => {
+                html += `<div class="iteration-block">`;
+                html += `<div class="iteration-header">Iteration ${iter.number}</div>`;
+
+                if (iter.thought) {
+                    html += `
+                        <div class="thought-block">
+                            <div class="block-label">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                </svg>
+                                Thinking
+                            </div>
+                            <div class="block-content">${escapeHtml(iter.thought)}</div>
+                        </div>
+                    `;
+                }
+
+                if (iter.action) {
+                    html += `
+                        <div class="action-block">
+                            <div class="block-label">
+                                <svg viewBox="0 0 24 24">
+                                    <polyline points="9 11 12 14 22 4"></polyline>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                                </svg>
+                                Action
+                            </div>
+                            <div class="block-content">${escapeHtml(iter.action)}</div>
+                        </div>
+                    `;
+                }
+
+                if (iter.observation) {
+                    html += `
+                        <div class="observation-block">
+                            <div class="block-label">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                                Observation
+                            </div>
+                            <div class="block-content">${escapeHtml(iter.observation)}</div>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+            });
+            return html;
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const sendBtn = document.getElementById('chat-send-btn');
+            const modelSelector = document.getElementById('model-selector');
+            const prompt = input.value.trim();
+            const selectedModel = currentSelectedModel;
+
+            if (!prompt) return;
+
+            // Reset scroll tracking for new message
+            userHasScrolledUp = false;
+
+            input.disabled = true;
+            sendBtn.disabled = true;
+            modelSelector.style.pointerEvents = 'none';
+            modelSelector.style.opacity = '0.5';
+
+            addChatMessage(prompt, true);
+            input.value = '';
+
+            console.log('[Dashboard] Using model:', selectedModel);
+
+            // Create streaming message container
+            const botAvatar = `<svg viewBox="0 0 24 24" style="width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2;">
+                <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                <circle cx="8" cy="15" r="1"></circle>
+                <circle cx="16" cy="15" r="1"></circle>
+                <path d="M9 7h6M12 7V3"></path>
+            </svg>`;
+
+            const messagesContainer = document.getElementById('chat-messages');
+            const time = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+            const streamingDiv = document.createElement('div');
+            streamingDiv.className = 'chat-message';
+            streamingDiv.id = 'streaming-message';
+            streamingDiv.innerHTML = `
+                <div class="chat-message-avatar">${botAvatar}</div>
+                <div>
+                    <div class="chat-message-content">
+                        <div class="chat-thinking">
+                            <div class="chat-thinking-header">Agent Execution (Live)</div>
+                            <div id="streaming-content"></div>
+                            <div class="streaming-indicator" id="streaming-indicator">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-message-time">${time}</div>
+                </div>
+            `;
+            messagesContainer.appendChild(streamingDiv);
+
+            const streamingContent = document.getElementById('streaming-content');
+            const streamingIndicator = document.getElementById('streaming-indicator');
+            let fullOutput = '';
+
+            try {
+                console.log('[Dashboard] Starting orchestrator request:', prompt);
+
+                const response = await fetch('http://localhost:5000/api/run/stream', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        model: selectedModel
+                    })
+                });
+
+                console.log('[Dashboard] Stream connection established');
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        console.log('[Dashboard] Stream ended');
+                        break;
+                    }
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            try {
+                                const data = JSON.parse(line.slice(6));
+
+                                if (data.type === 'stdout') {
+                                    fullOutput += data.content;
+
+                                    // Check for API errors in output
+                                    if (data.content.includes('ERROR') || data.content.includes('token_quota_exceeded') || data.content.includes('too_many_tokens')) {
+                                        console.error('[Dashboard] ⚠️  API Error detected:', data.content.trim());
+                                    }
+
+                                    const iterations = parseReActOutput(fullOutput);
+                                    streamingContent.innerHTML = renderIterations(iterations);
+                                    smartAutoScroll(messagesContainer);
+                                } else if (data.type === 'done') {
+                                    console.log('[Dashboard] ✓ Orchestration completed. Return code:', data.returncode);
+
+                                    // Remove streaming indicator
+                                    if (streamingIndicator) {
+                                        streamingIndicator.remove();
+                                    }
+
+                                    // Check for API errors in fullOutput
+                                    const hasApiError = fullOutput.includes('ERROR') ||
+                                                       fullOutput.includes('token_quota_exceeded') ||
+                                                       fullOutput.includes('too_many_tokens') ||
+                                                       fullOutput.includes('429');
+
+                                    // Extract actual API error message if present
+                                    let apiErrorMessage = null;
+                                    if (hasApiError) {
+                                        const errorMatch = fullOutput.match(/\[ERROR\]\s+API Error:\s+(\d+)\s+-\s+({[^}]+})/);
+                                        if (errorMatch) {
+                                            apiErrorMessage = `❌ API Error ${errorMatch[1]}: ${errorMatch[2]}`;
+                                        } else {
+                                            // Fallback: try to extract any line with [ERROR]
+                                            const errorLineMatch = fullOutput.match(/\[ERROR\][^\n]*/);
+                                            apiErrorMessage = errorLineMatch ? `❌ ${errorLineMatch[0]}` : '❌ API Limit Reached';
+                                        }
+                                    }
+
+                                    // Check for security rejection first
+                                    const securityRejectionMatch = fullOutput.match(/\[Security\]\s+❌\s+Input rejected - ([^\n]+)/);
+                                    const securityPatternsMatch = fullOutput.match(/\[Security\]\s+Detected patterns:\s+\[([^\]]+)\]/);
+
+                                    let summary;
+                                    if (securityRejectionMatch) {
+                                        // Security rejection detected
+                                        summary = `🛡️ Security: ${securityRejectionMatch[1]}`;
+                                        if (securityPatternsMatch) {
+                                            // Clean up pattern display
+                                            const patterns = securityPatternsMatch[1]
+                                                .replace(/'/g, '')
+                                                .replace(/,\s+/g, ', ')
+                                                .substring(0, 100);  // Limit length
+                                            summary += `<br><br><strong>Reason:</strong> Detected prohibited pattern`;
+                                        }
+                                    } else {
+                                        // Normal summary extraction
+                                        const summaryMatch = fullOutput.match(/ORCHESTRATOR FINAL SUMMARY[\s\S]*?={80}\n([\s\S]*?)\n={80}/);
+                                        summary = summaryMatch ? summaryMatch[1].trim() : (apiErrorMessage || '❌ Error: Orchestrator failed to generate summary');
+
+                                        // Override summary if API error detected
+                                        if (hasApiError && !summary.includes('❌')) {
+                                            summary = apiErrorMessage || 'API Limit Reached';
+                                        }
+                                    }
+
+                                    const tokenMatch = fullOutput.match(/Total tokens: (\d+)/);
+                                    const iterationsMatch = fullOutput.match(/Iterations: (\d+)/);
+                                    const appliancesMatch = fullOutput.match(/Successfully orchestrated (\d+) appliance/);
+
+                                    let metrics = '';
+                                    if (tokenMatch || iterationsMatch || appliancesMatch) {
+                                        metrics = '<br><br><strong>Metrics:</strong><br>';
+                                        if (appliancesMatch) metrics += `• Appliances: ${appliancesMatch[1]}<br>`;
+                                        if (iterationsMatch) metrics += `• Iterations: ${iterationsMatch[1]}<br>`;
+                                        if (tokenMatch) metrics += `• Tokens: ${Number(tokenMatch[1]).toLocaleString()}`;
+                                    }
+
+                                    console.log('[Dashboard] Metrics extracted:', {
+                                        appliances: appliancesMatch?.[1] || 0,
+                                        iterations: iterationsMatch?.[1] || 0,
+                                        tokens: tokenMatch?.[1] || 0
+                                    });
+
+                                    // Update to show trace first, then summary at bottom
+                                    streamingDiv.querySelector('.chat-message-content').innerHTML = `
+                                        <div class="chat-thinking">
+                                            <div class="chat-thinking-header">Agent Execution Trace</div>
+                                            ${streamingContent.innerHTML}
+                                        </div>
+                                        <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-color);">
+                                            ${summary}${metrics}
+                                        </div>
+                                    `;
+
+                                    streamingDiv.removeAttribute('id');
+
+                                    // Change button to "New Chat"
+                                    sendBtn.textContent = 'New Chat';
+
+                                    setTimeout(() => {
+                                        loadRunData();
+                                    }, 1000);
+                                } else if (data.type === 'error') {
+                                    console.error('[Dashboard] ❌ Backend error:', data.content);
+
+                                    if (streamingIndicator) {
+                                        streamingIndicator.remove();
+                                    }
+                                    streamingDiv.remove();
+                                    addChatMessage(`❌ Error: ${data.content}`);
+
+                                    // Change button to "New Chat"
+                                    sendBtn.textContent = 'New Chat';
+                                }
+                            } catch (e) {
+                                console.error('Error parsing SSE data:', e);
+                            }
+                        }
+                    }
+                }
+
+            } catch (error) {
+                console.error('[Dashboard] ❌ Connection error:', error);
+                console.error('[Dashboard] Full output before error:', fullOutput);
+
+                if (streamingIndicator) {
+                    streamingIndicator.remove();
+                }
+                const streamingMsg = document.getElementById('streaming-message');
+                if (streamingMsg) streamingMsg.remove();
+                addChatMessage(`❌ Failed to connect to API. Make sure the Flask server is running on port 5000.<br><br>Error: ${error.message}`);
+
+                // Change button to "New Chat"
+                sendBtn.textContent = 'New Chat';
+            }
+
+            // Log full output for debugging
+            if (fullOutput) {
+                console.log('[Dashboard] Full orchestrator output:', fullOutput);
+            }
+
+            input.disabled = false;
+            sendBtn.disabled = false;
+            modelSelector.style.pointerEvents = 'auto';
+            modelSelector.style.opacity = '1';
+
+            // Only focus if button is still "Send"
+            if (sendBtn.textContent === 'Send') {
+                input.focus();
+            }
+        }
+
+        function loadDisplayLimitPreference() {
+            const savedLimit = localStorage.getItem('displayLimit');
+            const selector = document.getElementById('display-limit-selector');
+
+            if (savedLimit) {
+                if (savedLimit === String(allRuns.length)) {
+                    selector.value = 'all';
+                    displayLimit = allRuns.length;
+                } else {
+                    selector.value = savedLimit;
+                    displayLimit = parseInt(savedLimit);
+                }
+            }
+        }
+
+        // Filtering and sorting functions
+        function populateModelFilter() {
+            const modelSelect = document.getElementById('filter-model');
+            const uniqueModels = [...new Set(allRuns.map(r => r.model || 'unknown'))].sort();
+
+            // Keep "All Models" option and add unique models
+            modelSelect.innerHTML = '<option value="">All Models</option>';
+            uniqueModels.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model;
+                option.textContent = model;
+                modelSelect.appendChild(option);
+            });
+        }
+
+        function applyFilters() {
+            const searchText = document.getElementById('search-prompt').value.toLowerCase();
+            const modelFilter = document.getElementById('filter-model').value;
+            const statusFilter = document.getElementById('filter-status').value;
+
+            filteredRuns = allRuns.filter(run => {
+                // Search filter (prompt)
+                const matchesSearch = !searchText || (run.user_request || '').toLowerCase().includes(searchText);
+
+                // Model filter
+                const matchesModel = !modelFilter || (run.model || 'unknown') === modelFilter;
+
+                // Status filter
+                const matchesStatus = !statusFilter ||
+                    (statusFilter === 'success' && run.success) ||
+                    (statusFilter === 'failed' && !run.success);
+
+                return matchesSearch && matchesModel && matchesStatus;
+            });
+
+            // Re-apply current sort
+            applySorting();
+            updateDashboard();
+        }
+
+        function clearFilters() {
+            document.getElementById('search-prompt').value = '';
+            document.getElementById('filter-model').value = '';
+            document.getElementById('filter-status').value = '';
+            filteredRuns = [...allRuns];
+            applySorting();
+            updateDashboard();
+        }
+
+        function sortTable(column) {
+            // Toggle direction if clicking same column
+            if (currentSortColumn === column) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortColumn = column;
+                currentSortDirection = 'desc'; // Default to descending for new column
+            }
+
+            applySorting();
+            updateSortIndicators();
+            updateRunsTable();
+        }
+
+        function applySorting() {
+            filteredRuns.sort((a, b) => {
+                let aVal, bVal;
+
+                switch (currentSortColumn) {
+                    case 'timestamp':
+                        aVal = new Date(a.timestamp);
+                        bVal = new Date(b.timestamp);
+                        break;
+                    case 'model':
+                        aVal = (a.model || 'unknown').toLowerCase();
+                        bVal = (b.model || 'unknown').toLowerCase();
+                        break;
+                    case 'status':
+                        aVal = a.success ? 1 : 0;
+                        bVal = b.success ? 1 : 0;
+                        break;
+                    case 'appliances':
+                        aVal = a.num_appliances || 0;
+                        bVal = b.num_appliances || 0;
+                        break;
+                    case 'duration':
+                        aVal = a.duration_seconds || 0;
+                        bVal = b.duration_seconds || 0;
+                        break;
+                    case 'iterations':
+                        aVal = a.iterations || 0;
+                        bVal = b.iterations || 0;
+                        break;
+                    case 'tokens':
+                        aVal = a.total_tokens || 0;
+                        bVal = b.total_tokens || 0;
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (aVal < bVal) return currentSortDirection === 'asc' ? -1 : 1;
+                if (aVal > bVal) return currentSortDirection === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function updateSortIndicators() {
+            // Remove all sort indicators
+            document.querySelectorAll('th.sortable').forEach(th => {
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            // Add indicator to current sort column
+            const currentHeader = document.querySelector(`th[data-sort="${currentSortColumn}"]`);
+            if (currentHeader) {
+                currentHeader.classList.add(`sort-${currentSortDirection}`);
+            }
+        }
+
+        // Initial setup
+        initTheme(); // Initialize theme (dark mode by default)
+        loadModelPreference(); // Load saved model selection
+        loadAvailableModels(); // Load models from API on page load
+
+        if (hotReloadEnabled) {
+            setInterval(checkForHotReload, 1000);
+            console.log('🔥 Hot reload enabled');
+        }
+
+        // Load initial data for dashboard
+        loadRunData();
+    </script>
+</body>
+</html>

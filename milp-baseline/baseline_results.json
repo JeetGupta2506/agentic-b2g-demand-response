@@ -1,0 +1,37 @@
+{
+  "optimal_schedules": {
+    "washing_machine": {
+      "optimal_slot": 10,
+      "duration_slots": 8,
+      "window_sum": 868.3299999999999,
+      "cost_eur": 0.3907485
+    },
+    "dishwasher": {
+      "optimal_slot": 11,
+      "duration_slots": 6,
+      "window_sum": 648.37,
+      "cost_eur": 0.2917665
+    },
+    "ev_charger": {
+      "optimal_slot": 1,
+      "duration_slots": 24,
+      "window_sum": 2742.4450000000006,
+      "cost_eur": 1.2341002500000005
+    }
+  },
+  "worst_3hour_window": {
+    "start_slot": 26,
+    "end_slot": 38,
+    "duration_slots": 12,
+    "start_time": "06:30",
+    "end_time": "09:30",
+    "window_sum": 3357.3300000000004,
+    "avg_price": 279.77750000000003
+  },
+  "price_statistics": {
+    "min_price": 103.51,
+    "max_price": 375.08,
+    "avg_price": 157.52911458333324,
+    "median_price": 126.64
+  }
+}

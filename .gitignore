@@ -1,0 +1,57 @@
+# Environment variables (API keys)
+.env
+
+# Google Calendar OAuth
+token.json
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+security_log.txt
+
+# Data
+data/runs/**/*.json
+data/schedules.json
+data/entsoe_debug.xml
+saved_prices_*.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Research results (keep in dev, not in public repo)
+*.csv
+analytical_query_evaluation.csv
+evaluation_results.csv
+scheduling_evaluation.csv
+
+# Development artifacts
+COMPLETE_SYSTEM_PROMPT.md
+SYSTEM_OVERVIEW.md
+EVALUATION_GUIDE.md
+scripts_archive/
+
+# Test files
+test_*.py

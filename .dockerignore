@@ -1,0 +1,52 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Project specific
+data/runs/
+*.log
+claude_screenshots/
+claude_context_sessions/
+backups/
+scripts_archive/
+*.csv
+
+# Google OAuth credentials
+token.json
+credentials.json
+
+# Documentation
+CLAUDE.md
+EVALUATION_GUIDE.md
+SYSTEM_OVERVIEW.md
+COMPLETE_SYSTEM_PROMPT.md
+
+# Test files
+test_*.py
+*_test.py
+
+# Misc
+.DS_Store
+*.tmp

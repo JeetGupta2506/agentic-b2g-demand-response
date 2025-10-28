@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  hems-api:
+    build: .
+    container_name: agentic-hems-api
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - ./data/runs:/app/data/runs
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  hems-dashboard:
+    image: python:3.11-slim
+    container_name: agentic-hems-dashboard
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: python -m http.server 8000
+    restart: unless-stopped
