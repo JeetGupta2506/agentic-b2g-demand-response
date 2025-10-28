@@ -1,8 +1,15 @@
-# Agentic AI HEMS
+# Agentic AI Home Energy Management System
 
-LLM-based Home Energy Management System using ReAct orchestration for optimal appliance scheduling.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
+[![GitHub stars](https://img.shields.io/github/stars/redaelmakroum/agentic-ai-hems?style=social)](https://github.com/redaelmakroum/agentic-ai-hems/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/redaelmakroum/agentic-ai-hems)](https://github.com/redaelmakroum/agentic-ai-hems/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/redaelmakroum/agentic-ai-hems)](https://github.com/redaelmakroum/agentic-ai-hems/commits/main)
 
-A research simulation platform demonstrating how Large Language Models can coordinate multiple flexible loads (washing machines, dishwashers, EV chargers) to minimize electricity costs while respecting user constraints.
+An agentic AI system for intelligent home energy management. Features autonomous orchestration with specialist agents, real-time electricity price optimization, transparent ReAct reasoning chains, multi-appliance coordination, provider-agnostic LLM support, calendar integration for deadline constraints, comprehensive execution logging, and MILP baseline comparison—all through a real-time streaming dashboard.
+
+This project aims to provide a foundation for exploring agentic AI architectures in demand response scenarios, enabling research in interpretable decision-making, flexible constraint handling, and systematic LLM evaluation for home energy management.
 
 ---
 
@@ -146,6 +153,10 @@ If you use this code in your research, please cite:
 ```
 [Citation details to be added upon publication]
 ```
+
+If you find this work useful for your research, please consider citing the paper.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on code contributions and development setup.
 
 ---
 
