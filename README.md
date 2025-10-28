@@ -42,7 +42,7 @@ cp .env.example .env
 **Option A: Docker (Recommended)**
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 Open dashboard: http://localhost:8000/dashboard.html

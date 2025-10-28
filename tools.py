@@ -54,7 +54,11 @@ def get_electricity_prices(date: Optional[str] = None, use_cached_prices: bool =
         from entsoe_client import fetch_entsoe_prices
         from config import ENTSOE_API_KEY, BIDDING_ZONE
 
-        if ENTSOE_API_KEY:
+        if not ENTSOE_API_KEY:
+            print("⚠ ENTSO-E API key not configured. Please add ENTSOE_API_KEY to .env file.")
+            print("  Register at: https://transparency.entsoe.eu/")
+            print("  Falling back to mock data...")
+        else:
             # If no date specified, fetch tomorrow's prices (day-ahead)
             if date is None:
                 tomorrow = datetime.now() + timedelta(days=1)
@@ -69,7 +73,8 @@ def get_electricity_prices(date: Optional[str] = None, use_cached_prices: bool =
     except Exception as e:
         # Fallback to mock data if API fails
         print(f"⚠ ENTSO-E API failed: {type(e).__name__}: {e}")
-        print("Falling back to mock data...")
+        print("  Check your ENTSOE_API_KEY and BIDDING_ZONE in .env file.")
+        print("  Falling back to mock data...")
 
     # Fallback: Read from mock file
     data_path = Path(__file__).parent / "data" / "prices_sample.json"

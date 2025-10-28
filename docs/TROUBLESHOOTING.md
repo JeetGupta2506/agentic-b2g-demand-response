@@ -8,7 +8,7 @@ Common issues and solutions for Agentic AI HEMS.
 
 ### Containers won't start
 
-**Symptom**: `docker-compose up` fails or containers exit immediately
+**Symptom**: `docker compose up` fails or containers exit immediately
 
 **Solutions**:
 
@@ -28,20 +28,20 @@ Common issues and solutions for Agentic AI HEMS.
    # Ports 5000 and 8000 must be free
    lsof -i :5000
    lsof -i :8000
-   # If occupied, stop conflicting services or change ports in docker-compose.yml
+   # If occupied, stop conflicting services or change ports in docker compose.yml
    ```
 
 4. **View container logs**
    ```bash
-   docker-compose logs hems-api
-   docker-compose logs hems-dashboard
+   docker compose logs hems-api
+   docker compose logs hems-dashboard
    ```
 
 5. **Rebuild containers**
    ```bash
-   docker-compose down
-   docker-compose build --no-cache
-   docker-compose up -d
+   docker compose down
+   docker compose build --no-cache
+   docker compose up -d
    ```
 
 ---
@@ -65,7 +65,7 @@ Common issues and solutions for Agentic AI HEMS.
    ```
 
 3. **Increase health check timeout**
-   - Edit `docker-compose.yml`:
+   - Edit `docker compose.yml`:
    ```yaml
    healthcheck:
      start_period: 60s  # Give more startup time
@@ -81,7 +81,7 @@ Common issues and solutions for Agentic AI HEMS.
 
 1. **Restart container**
    ```bash
-   docker-compose restart hems-api
+   docker compose restart hems-api
    ```
 
 2. **Verify volume mounts**
@@ -126,8 +126,8 @@ Common issues and solutions for Agentic AI HEMS.
 
 3. **Restart after .env changes**
    ```bash
-   docker-compose down
-   docker-compose up -d
+   docker compose down
+   docker compose up -d
    ```
 
 ---
@@ -327,7 +327,7 @@ Common issues and solutions for Agentic AI HEMS.
 1. **Verify HTTP server is running**
    ```bash
    # Docker
-   docker-compose ps hems-dashboard
+   docker compose ps hems-dashboard
 
    # Local
    cd agentic-hems && python -m http.server 8000
@@ -415,7 +415,7 @@ Common issues and solutions for Agentic AI HEMS.
 **Solutions**:
 
 1. **Limit container memory**
-   - Add to `docker-compose.yml`:
+   - Add to `docker compose.yml`:
    ```yaml
    mem_limit: 2g
    ```
@@ -482,8 +482,8 @@ Common issues and solutions for Agentic AI HEMS.
 
 3. **Rebuild Docker image**
    ```bash
-   docker-compose build --no-cache
-   docker-compose up -d
+   docker compose build --no-cache
+   docker compose up -d
    ```
 
 ---
@@ -493,7 +493,7 @@ Common issues and solutions for Agentic AI HEMS.
 1. **Check logs**
    ```bash
    # Docker
-   docker-compose logs -f
+   docker compose logs -f
 
    # Local
    # Check terminal output from api.py

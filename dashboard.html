@@ -1863,19 +1863,11 @@
             console.log('[Dashboard] Updated recently used models:', recent);
         }
 
-        // Fallback hardcoded models (used if API fails)
+        // Fallback models (empty - API call required)
         const FALLBACK_MODELS = {
             most_used: [],
-            newest: [
-                { id: 'llama-3.3-70b' },
-                { id: 'gpt-oss-120b' },
-                { id: 'qwen-3-32b' }
-            ],
-            other: [
-                { id: 'llama3.1-8b' },
-                { id: 'llama-4-maverick-17b-128e-instruct' },
-                { id: 'llama-4-scout-17b-16e-instruct' }
-            ]
+            newest: [],
+            other: []
         };
 
         async function loadAvailableModels() {
@@ -1902,12 +1894,12 @@
                 }
 
                 // If API call failed, use fallback
-                console.warn('[Dashboard] API call failed, using fallback models');
+                console.warn('[Dashboard] API call failed, no models available. Please check your API keys.');
                 populateModelDropdown(FALLBACK_MODELS.most_used, FALLBACK_MODELS.newest, FALLBACK_MODELS.other);
                 modelsLoaded = true;
 
             } catch (error) {
-                console.warn('[Dashboard] Error fetching models, using fallback:', error);
+                console.warn('[Dashboard] Error fetching models, no models available. Please check your API keys.', error);
                 populateModelDropdown(FALLBACK_MODELS.most_used, FALLBACK_MODELS.newest, FALLBACK_MODELS.other);
                 modelsLoaded = true;
             }
