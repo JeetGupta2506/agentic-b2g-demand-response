@@ -80,6 +80,7 @@ Watch the orchestrator reason through the task in real-time.
 - **Provider-Agnostic**: Works with Cerebras, OpenAI, OpenRouter, local LLMs (Ollama)
 - **Real-Time Streaming**: Watch agent reasoning as it happens via Server-Sent Events
 - **Calendar Integration**: EV charging deadlines from Google Calendar
+- **Optional Device Control**: API integration for actual appliance control (experimental, disabled by default)
 
 ### Research Features
 
