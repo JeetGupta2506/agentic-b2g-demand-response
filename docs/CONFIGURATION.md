@@ -227,11 +227,11 @@ For providers not explicitly listed above:
 
 **Type**: Path
 **Description**: Path to Python virtual environment (local development only)
-**Default**: `/home/users/relmakro/projects4/workspace_reda/Code/myenv`
+**Default**: Not set (no venv activation)
 **Docker**: Not used (dependencies installed globally in container)
 **Example**: `VENV_PATH=/path/to/your/venv`
 
-**Note**: Only needed for local development with custom venv path
+**Note**: Optional. Only set this if you're running locally and want to activate a specific virtual environment
 
 ---
 

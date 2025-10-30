@@ -33,8 +33,8 @@ def run_orchestrator():
         work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
 
         # Virtual environment activation (only for local development)
-        venv_path = os.environ.get('VENV_PATH', '/home/users/relmakro/projects4/workspace_reda/Code/myenv')
-        venv_activate = f'source {venv_path}/bin/activate && ' if os.path.exists(venv_path) else ''
+        venv_path = os.environ.get('VENV_PATH')
+        venv_activate = f'source {venv_path}/bin/activate && ' if venv_path and os.path.exists(venv_path) else ''
 
         # Run orchestrator
         result = subprocess.run(
@@ -82,8 +82,8 @@ def run_orchestrator_stream():
             work_dir = os.environ.get('HEMS_WORK_DIR') or os.path.dirname(os.path.abspath(__file__))
 
             # Virtual environment activation (only for local development)
-            venv_path = os.environ.get('VENV_PATH', '/home/users/relmakro/projects4/workspace_reda/Code/myenv')
-            venv_activate = f'source {venv_path}/bin/activate && ' if os.path.exists(venv_path) else ''
+            venv_path = os.environ.get('VENV_PATH')
+            venv_activate = f'source {venv_path}/bin/activate && ' if venv_path and os.path.exists(venv_path) else ''
 
             # Set model as environment variable so orchestrator can use it
             env = os.environ.copy()
