@@ -25,8 +25,8 @@ Common issues and solutions for Agentic AI HEMS.
 
 3. **Check port conflicts**
    ```bash
-   # Ports 5000 and 8000 must be free
-   lsof -i :5000
+   # Ports 5001 and 8000 must be free
+   lsof -i :5001
    lsof -i :8000
    # If occupied, stop conflicting services or change ports in docker compose.yml
    ```
@@ -54,7 +54,7 @@ Common issues and solutions for Agentic AI HEMS.
 
 1. **Check API is responding**
    ```bash
-   curl http://localhost:5000/api/health
+   curl http://localhost:5001/api/health
    ```
 
 2. **Verify curl is installed in container**
@@ -335,7 +335,7 @@ Common issues and solutions for Agentic AI HEMS.
 
 2. **Check correct URL**
    - Should be: `http://localhost:8000/dashboard.html`
-   - Not: `http://localhost:5000/dashboard.html`
+   - Not: `http://localhost:5001/dashboard.html`
 
 3. **Clear browser cache**
    - Hard refresh: `Ctrl+Shift+R` (Windows/Linux) or `Cmd+Shift+R` (Mac)
@@ -350,12 +350,12 @@ Common issues and solutions for Agentic AI HEMS.
 
 1. **Check API is running**
    ```bash
-   curl http://localhost:5000/api/health
+   curl http://localhost:5001/api/health
    ```
 
 2. **Test models endpoint**
    ```bash
-   curl http://localhost:5000/api/models
+   curl http://localhost:5001/api/models
    ```
 
 3. **Verify CORS is enabled**
@@ -502,7 +502,7 @@ Common issues and solutions for Agentic AI HEMS.
 2. **Enable debug mode**
    - Edit `api.py`:
    ```python
-   app.run(host='0.0.0.0', port=5000, debug=True)
+   app.run(host='0.0.0.0', port=5001, debug=True)
    ```
 
 3. **Search existing issues**

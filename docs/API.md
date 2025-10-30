@@ -4,8 +4,8 @@ The Agentic AI HEMS API provides endpoints for running the orchestrator and fetc
 
 ## Base URL
 
-- **Local**: `http://localhost:5000`
-- **Docker**: `http://localhost:5000`
+- **Local**: `http://localhost:5001`
+- **Docker**: `http://localhost:5001`
 
 ## Endpoints
 

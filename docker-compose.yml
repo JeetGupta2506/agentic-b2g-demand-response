@@ -3,7 +3,7 @@ services:
     build: .
     container_name: agentic-hems-api
     ports:
-      - "5000:5000"
+      - "5001:5001"
     env_file:
       - .env
     volumes:
@@ -13,7 +13,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3

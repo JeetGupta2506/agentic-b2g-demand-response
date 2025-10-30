@@ -206,7 +206,7 @@ After adding your API keys to `.env`:
    python agentic-hems/api.py
 
    # In another terminal
-   curl http://localhost:5000/api/models
+   curl http://localhost:5001/api/models
    ```
 
 3. **Run Test Prompt**

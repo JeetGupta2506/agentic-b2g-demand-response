@@ -1880,7 +1880,7 @@
                 const recentlyUsed = getRecentlyUsedModels();
                 const recentlyUsedParam = recentlyUsed.join(',');
 
-                const response = await fetch(`http://localhost:5000/api/models?recently_used=${encodeURIComponent(recentlyUsedParam)}`);
+                const response = await fetch(`http://localhost:5001/api/models?recently_used=${encodeURIComponent(recentlyUsedParam)}`);
 
                 if (response.ok) {
                     const data = await response.json();
@@ -2450,7 +2450,7 @@
             try {
                 console.log('[Dashboard] Starting orchestrator request:', prompt);
 
-                const response = await fetch('http://localhost:5000/api/run/stream', {
+                const response = await fetch('http://localhost:5001/api/run/stream', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2611,7 +2611,7 @@
                 }
                 const streamingMsg = document.getElementById('streaming-message');
                 if (streamingMsg) streamingMsg.remove();
-                addChatMessage(`❌ Failed to connect to API. Make sure the Flask server is running on port 5000.<br><br>Error: ${error.message}`);
+                addChatMessage(`❌ Failed to connect to API. Make sure the Flask server is running on port 5001.<br><br>Error: ${error.message}`);
 
                 // Change button to "New Chat"
                 sendBtn.textContent = 'New Chat';

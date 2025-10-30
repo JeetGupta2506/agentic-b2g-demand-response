@@ -7,7 +7,7 @@ import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
-import pytz
+from zoneinfo import ZoneInfo
 
 
 class ENTSOEClient:
@@ -33,7 +33,7 @@ class ENTSOEClient:
         """
         self.api_key = api_key
         self.zone_code = self.BIDDING_ZONES.get(bidding_zone, bidding_zone)
-        self.timezone = pytz.timezone("Europe/Vienna")  # Adjust based on zone
+        self.timezone = ZoneInfo("Europe/Vienna")  # Adjust based on zone
 
     def get_day_ahead_prices(
         self,
@@ -213,7 +213,7 @@ class ENTSOEClient:
 
         # Generate target timeslots
         start_of_day = target_date.replace(hour=0, minute=0, second=0, microsecond=0)
-        start_of_day_local = self.timezone.localize(start_of_day)
+        start_of_day_local = start_of_day.replace(tzinfo=self.timezone)
 
         timeslots = []
         prices = []

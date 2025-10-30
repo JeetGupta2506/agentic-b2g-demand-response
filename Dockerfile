@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt -r requirements-api.txt
 COPY . .
 
 # Expose port
-EXPOSE 5000
+EXPOSE 5001
 
 # Environment variables
 ENV PYTHONUNBUFFERED=1

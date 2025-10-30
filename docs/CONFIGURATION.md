@@ -309,7 +309,7 @@ These are set in code, not in `.env`. Modify `api.py` to change:
 # In api.py
 app.run(
     host='0.0.0.0',  # Bind to all interfaces
-    port=5000,       # API port
+    port=5001,       # API port
     debug=True       # Debug mode (disable in production)
 )
 ```
@@ -562,10 +562,10 @@ Check configuration validity:
 curl "https://web-api.tp.entsoe.eu/api?securityToken=$ENTSOE_API_KEY&documentType=A44&in_Domain=10YAT-APG------L&out_Domain=10YAT-APG------L&periodStart=202501010000&periodEnd=202501020000"
 
 # Test LLM provider
-curl http://localhost:5000/api/models
+curl http://localhost:5001/api/models
 
 # Test full flow
-curl -X POST http://localhost:5000/api/run/stream \
+curl -X POST http://localhost:5001/api/run/stream \
   -H "Content-Type: application/json" \
   -d '{"prompt": "Schedule dishwasher for tomorrow", "model": "your-model-id"}'
 ```

@@ -22,7 +22,7 @@ if ! python3 -c "import flask" 2>/dev/null; then
 fi
 
 # Start Flask API in background
-echo "Starting Flask API on port 5000..."
+echo "Starting Flask API on port 5001..."
 python3 api.py &
 API_PID=$!
 
@@ -40,7 +40,7 @@ echo "  ✅ Dashboard ready!"
 echo "=========================================="
 echo ""
 echo "  📊 Dashboard: http://localhost:8000/dashboard.html"
-echo "  🔌 API:       http://localhost:5000"
+echo "  🔌 API:       http://localhost:5001"
 echo ""
 echo "  Press Ctrl+C to stop all servers"
 echo ""
