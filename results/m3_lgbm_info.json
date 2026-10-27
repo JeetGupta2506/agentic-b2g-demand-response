@@ -1,0 +1,268 @@
+{
+  "seed": 42,
+  "splits": {
+    "train_end": "2025-06-30",
+    "val_end": "2025-12-31",
+    "test_end": "2026-09-30"
+  },
+  "pv": {
+    "params": {
+      "learning_rate": 0.1,
+      "min_child_samples": 100,
+      "num_leaves": 15
+    },
+    "n_estimators": 59,
+    "trials": [
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 20,
+          "num_leaves": 15
+        },
+        "n_estimators": 254,
+        "val_mae_kw": 0.10828490532443226
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 20,
+          "num_leaves": 31
+        },
+        "n_estimators": 236,
+        "val_mae_kw": 0.11300298780733305
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 20,
+          "num_leaves": 63
+        },
+        "n_estimators": 244,
+        "val_mae_kw": 0.11453440961604146
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 100,
+          "num_leaves": 15
+        },
+        "n_estimators": 216,
+        "val_mae_kw": 0.10883465876720645
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 100,
+          "num_leaves": 31
+        },
+        "n_estimators": 203,
+        "val_mae_kw": 0.11126769547980843
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 100,
+          "num_leaves": 63
+        },
+        "n_estimators": 188,
+        "val_mae_kw": 0.11137032456330978
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 20,
+          "num_leaves": 15
+        },
+        "n_estimators": 71,
+        "val_mae_kw": 0.10881105203672664
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 20,
+          "num_leaves": 31
+        },
+        "n_estimators": 58,
+        "val_mae_kw": 0.11250238481166158
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 20,
+          "num_leaves": 63
+        },
+        "n_estimators": 71,
+        "val_mae_kw": 0.11494084054623872
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 100,
+          "num_leaves": 15
+        },
+        "n_estimators": 59,
+        "val_mae_kw": 0.10824525055241833
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 100,
+          "num_leaves": 31
+        },
+        "n_estimators": 61,
+        "val_mae_kw": 0.11213136672918789
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 100,
+          "num_leaves": 63
+        },
+        "n_estimators": 54,
+        "val_mae_kw": 0.11286712200391114
+      }
+    ],
+    "feature_importance_gain_pct": {
+      "pv_lag1_kw": 60.6,
+      "pv_forecast_kw": 21.3,
+      "ghi_forecast_wm2": 16.3,
+      "pv_lag1_day_kwh": 0.4,
+      "ghi_forecast_day_kwh_m2": 0.4,
+      "cloud_forecast_day_pct": 0.3,
+      "slot": 0.2,
+      "doy_cos": 0.2,
+      "doy_sin": 0.2,
+      "cloud_forecast_pct": 0.1,
+      "temp_forecast_c": 0.1
+    }
+  },
+  "load": {
+    "params": {
+      "learning_rate": 0.1,
+      "min_child_samples": 100,
+      "num_leaves": 15
+    },
+    "n_estimators": 316,
+    "trials": [
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 20,
+          "num_leaves": 15
+        },
+        "n_estimators": 853,
+        "val_mae_kw": 0.05261324506243405
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 20,
+          "num_leaves": 31
+        },
+        "n_estimators": 418,
+        "val_mae_kw": 0.05258448389512869
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 20,
+          "num_leaves": 63
+        },
+        "n_estimators": 236,
+        "val_mae_kw": 0.05266520692551608
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 100,
+          "num_leaves": 15
+        },
+        "n_estimators": 944,
+        "val_mae_kw": 0.05249835408552571
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 100,
+          "num_leaves": 31
+        },
+        "n_estimators": 574,
+        "val_mae_kw": 0.05257151317790679
+      },
+      {
+        "params": {
+          "learning_rate": 0.03,
+          "min_child_samples": 100,
+          "num_leaves": 63
+        },
+        "n_estimators": 277,
+        "val_mae_kw": 0.0527925741430303
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 20,
+          "num_leaves": 15
+        },
+        "n_estimators": 316,
+        "val_mae_kw": 0.052641796903291085
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 20,
+          "num_leaves": 31
+        },
+        "n_estimators": 121,
+        "val_mae_kw": 0.0526126071360342
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 20,
+          "num_leaves": 63
+        },
+        "n_estimators": 75,
+        "val_mae_kw": 0.05265503161570039
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 100,
+          "num_leaves": 15
+        },
+        "n_estimators": 316,
+        "val_mae_kw": 0.0524849273482508
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 100,
+          "num_leaves": 31
+        },
+        "n_estimators": 120,
+        "val_mae_kw": 0.05264323245115969
+      },
+      {
+        "params": {
+          "learning_rate": 0.1,
+          "min_child_samples": 100,
+          "num_leaves": 63
+        },
+        "n_estimators": 79,
+        "val_mae_kw": 0.052781993175092794
+      }
+    ],
+    "feature_importance_gain_pct": {
+      "load_lag7_kw": 78.9,
+      "slot": 16.4,
+      "load_lag1_kw": 3.0,
+      "day_of_week": 1.4,
+      "doy_sin": 0.1,
+      "temp_forecast_c": 0.1,
+      "doy_cos": 0.1,
+      "load_lag1_day_kwh": 0.1,
+      "is_weekend": 0.0
+    }
+  }
+}

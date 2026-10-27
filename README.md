@@ -1,182 +1,186 @@
-# Agentic AI Home Energy Management System
+# Smart Home Energy Planner — Surat
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com/)
-[![GitHub issues](https://img.shields.io/github/issues/redaelmakroum/agentic-ai-hems)](https://github.com/redaelmakroum/agentic-ai-hems/issues)
-[![GitHub last commit](https://img.shields.io/github/last-commit/redaelmakroum/agentic-ai-hems)](https://github.com/redaelmakroum/agentic-ai-hems/commits/main)
+**Forecast-aware hybrid agentic AI for Building-to-Grid (B2G) demand response**
 
-An agentic AI system for intelligent home energy management. Features autonomous orchestration with specialist agents, real-time electricity price optimization, transparent ReAct reasoning chains, multi-appliance coordination, provider-agnostic LLM support, calendar integration for deadline constraints, comprehensive execution logging, and MILP baseline comparison all through a real-time streaming dashboard.
+B.Tech AI research project, SVNIT Surat.
+Repository: https://github.com/JeetGupta2506/agentic-b2g-demand-response
 
-This project aims to provide a foundation for exploring agentic AI architectures in residential demand response scenarios, enabling research in interpretable decision-making, flexible constraint handling, and systematic LLM evaluation for home energy management.
+A person types a request in plain English, for example *“I’m leaving at 7 tomorrow, I need the car at 90%, keep the room under 26 °C.”*
+The system plans the next day of a solar-powered house in 15-minute steps: when to charge the electric car, when to charge or use the home battery, and when to pre-cool with the AC. It aims to use as little grid electricity as possible, use the house’s own solar, keep people comfortable and stay under the 8 kW grid connection limit.
 
----
+**The design in one line:** LLM agents *understand* the request and set the rules, a MILP optimizer *computes* the schedule, and a verifier *checks* it and sends it back for replanning when something is wrong.
 
-## Quick Start
+## Team
 
-### 1. Prerequisites
+| Name | Roll number |
+|---|---|
+| Jeet Gupta | [roll number] |
+| [Member 2] | [roll number] |
+| [Member 3] | [roll number] |
 
-- Python 3.11+
-- API keys:
-  - [ENTSO-E](https://transparency.entsoe.eu/) (free, for day-ahead electricity prices)
-  - LLM provider: [Cerebras](https://cloud.cerebras.ai/) (recommended), OpenAI, OpenRouter, or local LLM
+Guide: [faculty name] · Course: [course name]
 
-### 2. Setup
+## Results at a glance
+
+Plans are made on the day-ahead **forecast** and scored on the **actual** weather of that day.
+
+| | |
+|---|---|
+| Electricity vs a simple rule-based house (4 example days) | **33–46% less** |
+| Gap to a planner with perfect knowledge of the weather | **within about 5%** on electricity |
+| Grid limit | never exceeded (simple rules hit 8 kW on every example day) |
+| A pure-LLM planner on the same request | **51** physical rules broken, car 20 kWh short, room 30.2 °C |
+
+Full explanation for newcomers: [docs/B2G_Project_Explained.pdf](docs/B2G_Project_Explained.pdf).
+
+## How it works
+
+```
+1 Forecast  →  2 LLM agents  →  3 Optimizer  →  4 Verifier  →  5 Score
+ LightGBM       orchestrator +     MILP (PuLP +     physics, wishes,    replay the plan on
+ solar and      EV, battery and    CBC), 96 slots   request, answer     the actual weather
+ demand         pre-cooling agents of 15 min            │ fails → replan (max 3)
+```
+
+| System | What it is |
+|---|---|
+| S0 | The base paper’s original system, kept runnable as the baseline |
+| S1 | Simple rules: charge the car on arrival, thermostat AC, battery stores spare solar |
+| S2 | Forecast + optimizer, no LLM |
+| S3 | Pure LLM: the LLM writes the whole schedule itself |
+| **S4** | **Our system: agents + optimizer + verifier** |
+| S5 | Optimizer with perfect knowledge of the real weather (upper bound) |
+
+## Based on
+
+El Makroum, Zwickl-Bernhard, Kranzl (2025). *Agentic AI Home Energy Management System: A Large Language Model Framework for Residential Load Scheduling.* [arXiv:2510.26603](https://arxiv.org/abs/2510.26603).
+Original code: https://github.com/RedaElMakroum/agentic-ai-hems (MIT licence). This repository is a fork of it; the original README is kept in [docs/ORIGINAL_README.md](docs/ORIGINAL_README.md).
+
+What we added: solar and weather forecasting for Surat, a home battery and AC pre-cooling next to the EV, joint planning under a grid limit with a MILP solver, a deterministic verifier with replanning, evaluation on actual weather, and a demo website. All new code is in [`b2g/`](b2g/); the original files only received the fixes needed to run them (any LLM provider, optional ENTSO-E key).
+
+## Dataset and resources
+
+| Resource | Used for | Link |
+|---|---|---|
+| Open-Meteo Historical Weather API (ERA5 reanalysis) | “Actual” sunlight, temperature and cloud cover for Surat (21.17° N, 72.83° E), 1 Feb 2024 – 30 Sep 2026 (973 days) | https://open-meteo.com/en/docs/historical-weather-api |
+| Open-Meteo Previous Runs API | Day-ahead weather forecasts (issued about one day before) | https://open-meteo.com/en/docs/previous-runs-api |
+| ERA5 (ECMWF) | The reanalysis behind the actual weather | https://www.ecmwf.int/en/forecasts/dataset/ecmwf-reanalysis-v5 |
+| Groq (free tier) | LLM used in our runs: `qwen/qwen3.8-27b`, temperature 0 | https://console.groq.com |
+| OpenRouter (optional) | Alternative LLM provider | https://openrouter.ai |
+| ENTSO-E Transparency Platform (optional) | Austrian prices for the original S0 system; without a key it uses `data/prices_sample.json` | https://transparency.entsoe.eu |
+
+Generated, not downloaded:
+
+- **Solar power** from sunlight: `5 kW × sunlight / 1000 × 0.8`.
+- **House base load**: a synthetic daily profile (about 10 kWh on weekdays, 12 kWh on weekends) with seeded noise; no smart-meter data was available.
+- **Tariff**: a placeholder Indian-style time-of-day tariff (₹7.0, ₹5.6 from 09:00 to 17:00, ₹8.4 from 18:00 to 22:00).
+
+All device sizes, the tariff and the thermal model are **placeholders** in [`b2g/config/default.yaml`](b2g/config/default.yaml). The processed data files are not stored in the repository; `python -m b2g.data.build` downloads and rebuilds them (no API key needed).
+
+## Implementation environment
+
+| | |
+|---|---|
+| OS | Windows 11 (also runs on Linux/macOS) |
+| Python | 3.11 (tested with 3.11.6) |
+| Node.js | 18 or newer, only to rebuild the website (tested with 24.12) |
+| Hardware | Laptop CPU only, no GPU needed |
+| Main libraries | pandas, numpy, LightGBM, PuLP (bundles the CBC solver), pydantic, Flask, Streamlit, pytest; website: Next.js 14, TypeScript, Tailwind, Recharts |
+| LLM | Any OpenAI-compatible API; we used Groq’s free tier |
+
+### Setup
 
 ```bash
-# Clone repository
-git clone https://github.com/redaelmakroum/agentic-ai-hems.git
-cd agentic-ai-hems
+git clone https://github.com/JeetGupta2506/agentic-b2g-demand-response.git
+cd agentic-b2g-demand-response
 
-# Install dependencies
-pip install -r requirements.txt
-pip install -r requirements-api.txt
+# Python 3.11 virtual environment (Windows)
+py -3.11 -m venv .venv
+.venv\Scripts\activate
+# (Linux/macOS: python3.11 -m venv .venv && source .venv/bin/activate)
 
-# Configure environment
-cp .env.example .env
-# Edit .env and add your API keys
+pip install -r requirements.txt -r requirements-api.txt -r requirements-b2g.txt
+
+# API keys: copy the template and fill in your own key (never commit .env)
+copy .env.example .env        # Linux/macOS: cp .env.example .env
+#   LLM_PROVIDER=groq
+#   GROQ_API_KEY=...
+#   GROQ_MODEL=qwen/qwen3.8-27b
 ```
 
-### 3. Run
+On Windows, run Python in UTF-8 mode for the original S0 system (`set PYTHONUTF8=1`); the `b2g` commands switch to it on their own.
 
-**Option A: Docker (Recommended)**
+### Build the data and forecasts
 
 ```bash
-docker compose up -d
+python -m b2g.data.build             # downloads Open-Meteo weather, builds data/b2g/processed/site_15min.csv
+python -m b2g.forecasting.train      # trains and scores the forecasters (~25 s) -> forecasts.csv
 ```
 
-Open dashboard: http://localhost:8000/dashboard.html
-
-**Option B: Local**
+### Run
 
 ```bash
-# Terminal 1: Start API server
-python api.py
+# The demo website with live requests (open http://localhost:3000)
+cd web && npm install && npm run build && cd ..     # once, builds web/out
+python -m b2g.demo.server
 
-# Terminal 2: Start dashboard server
-python -m http.server 8000
+# Our system (S4) on one request from the command line
+python -m b2g.cli --system S4 --date 2026-05-06 --request "Tomorrow I'm leaving at 7 and need the car at 90%."
+
+# Pure-LLM comparison (S3), and the week of baselines without an LLM (S1, S2, S5)
+python -m b2g.cli --system S3
+python -m b2g.eval.compare_baselines
+
+# Pre-run the four demo examples (uses the LLM once; answers are cached)
+python -m b2g.demo.precompute
+
+# Older Streamlit version of the demo
+streamlit run app.py
+
+# The original paper's system (S0)
+python orchestrator_agent_react.py "Schedule all flexible loads for minimal cost"
 ```
 
-Open dashboard: http://localhost:8000/dashboard.html
+### Tests
 
-### 4. Try It
-
-Enter a prompt in the dashboard:
-- "Schedule my dishwasher for tomorrow"
-- "Charge my EV tomorrow, optimize for cost"
-- "Schedule all flexible loads for minimal cost"
-
-Watch the orchestrator reason through the task in real-time.
-
----
-
-## Features
-
-### Core Capabilities
-
-- **ReAct Orchestration**: LLM uses Reasoning-Action pattern for transparent decision-making
-- **Day-Ahead Pricing**: Fetches electricity prices from ENTSO-E for 15-minute resolution optimization
-- **Multi-Appliance Coordination**: Dishwasher, washing machine, EV charger
-- **Provider-Agnostic**: Works with Cerebras, OpenAI, OpenRouter, local LLMs (Ollama)
-- **Real-Time Streaming**: Watch agent reasoning as it happens via Server-Sent Events
-- **Calendar Integration**: EV charging deadlines from Google Calendar
-- **Optional Device Control**: API integration for actual appliance control (experimental, disabled by default)
-
-### Research Features
-
-- **Execution Traces**: Every run logged with complete reasoning chain, token usage, and cost
-- **Model Comparison**: Test multiple LLMs on same tasks
-- **Analytics Dashboard**: Aggregate metrics across runs
-- **MILP Baseline**: Compare LLM performance against optimal mixed-integer linear programming
-
----
-
-## Documentation
-
-- **[Setup Guide](docs/SETUP.md)** - Detailed API key setup and provider configuration
-- **[Configuration Reference](docs/CONFIGURATION.md)** - Environment variables and settings
-- **[API Documentation](docs/API.md)** - HTTP endpoints and streaming protocol
-- **[Architecture Overview](docs/ARCHITECTURE.md)** - System design and data flow
-- **[Troubleshooting](docs/TROUBLESHOOTING.md)** - Common issues and solutions
-
----
-
-## Project Structure
-
-```
-agentic-hems/
-├── orchestrator_agent_react.py    # ReAct orchestrator (main entry point)
-├── api.py                         # Flask API server
-├── dashboard.html                 # Web interface
-├── tools.py                       # Utility functions (ENTSO-E, scheduling, calendar)
-├── config.py                      # Configuration and appliance specs
-├── entsoe_client.py              # Day-ahead price fetching
-├── security.py                    # Input validation
-├── data/
-│   └── runs/{model}/              # Execution traces (JSON logs)
-├── milp-baseline/                 # Optimal baseline for comparison
-│   └── optimizer.py
-├── docs/                          # Documentation
-├── dishwasher_agent.md           # Agent prompts
-├── washing_machine_agent.md
-├── ev_charger_agent.md
-├── hems_orchestrator.md
-└── docker-compose.yml             # Container orchestration
+```bash
+pytest -q
 ```
 
----
+139 automated tests cover the physical models, the solver, the agents (with a scripted fake LLM, no API calls), the verifier, the demo server and the app.
 
-## Technical Details
+## Reproducibility
 
-### Time Resolution
-- **15-minute intervals** (96 slots per 24 hours)
-- Matches day-ahead electricity market granularity
-- Configurable in principle, but ENTSO-E data fetching would need adjustment
+- Fixed random seeds, and the LLM at temperature 0.
+- Every LLM call (prompt, answer, tokens, time) is logged in `results/runs/`.
+- Answers are cached by prompt hash in `results/cache/`, so re-running an experiment costs no tokens.
+- Forecasters are trained up to June 2025, tuned on July–December 2025 and scored on January–September 2026; all example days are in the test period.
 
-### LLM Configuration
-- **Provider-Agnostic**: Works with any OpenAI-compatible API (Cerebras, OpenAI, OpenRouter, Ollama)
-- **Temperature**: 0.0 (deterministic scheduling decisions)
-- **Max Iterations**: 15 (prevents infinite loops)
+## Repository layout
 
-### Data Sources
-- **Electricity Prices**: ENTSO-E Transparency Platform (European day-ahead markets)
-- **Calendar**: Google Calendar API (optional, for EV deadline constraints)
-- **Weather**: Open-Meteo API (available but not actively used - free, no key required)
+| Path | Contents |
+|---|---|
+| `b2g/config/default.yaml` | All placeholder numbers: devices, tariff, comfort band, solver weights |
+| `b2g/data/` | Weather download, solar and base-load profiles, the 15-minute dataset |
+| `b2g/forecasting/` | Persistence, weather-physics and LightGBM forecasters |
+| `b2g/models/` | Battery, car, room temperature (1R1C) and site power balance |
+| `b2g/solver/milp.py` | The MILP optimizer |
+| `b2g/sim/` | One day’s data and the settlement on actual weather |
+| `b2g/baselines/` | S1 simple rules, S2 forecast + optimizer, S3 pure LLM |
+| `b2g/agents/` | LLM client, orchestrator, agent prompts and rule schemas |
+| `b2g/verifier/` | The four groups of checks |
+| `b2g/demo/` | Pre-run examples, web data export, the live server |
+| `web/` | The Next.js demo website |
+| `tests/` | pytest suite |
+| `docs/` | Project plan, design decisions, explainer PDF |
+| `results/` | Metrics tables, figures, demo results |
 
----
+## Limitations
 
-## Contributing
+- Device sizes, tariff and the house’s thermal model are placeholders, not measurements.
+- The house base load is synthetic; the “actual” weather is ERA5 reanalysis, not a rooftop meter.
+- Results come from one week and four example days with one LLM: a demonstration, not a large study.
 
-This is an active research project with ongoing development. Issues, questions, and contributions are welcome.
+## Licence
 
-If you use this code in your research, please cite:
-```
-[Citation details to be added upon publication]
-```
-
-If you find this work useful for your research, please consider citing the paper.
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on code contributions and development setup.
-
----
-
-## License
-
-MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## Acknowledgments
-
-This project is supervised by Dr. Sebastian Zwickl-Bernhard and Dr. Lukas Kranzl at TU Wien.
-
-Core development was supported by Claude Code.
-
----
-
-## Contact
-
-Reda El Makroum, M.Sc.
-Technische Universität Wien
-elmakroum@eeg.tuwien.ac.at
-https://www.redaelmakroum.dev/
+MIT, as the original project. See [LICENSE](LICENSE) (copyright of the original code: Reda El Makroum, 2025).

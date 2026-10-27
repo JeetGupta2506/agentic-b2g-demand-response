@@ -1,0 +1,37 @@
+<section id="how" data-transition="fade" style="background:#F6F5F0;color:#1A2333;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:48px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#1F5FD1">How it works</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#0F1A2B">The LLM understands, the optimizer computes, the verifier checks</h2>
+</div>
+<div style="display:flex;align-items:stretch;gap:16px">
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FDF1D6;border-radius:20px;padding:32px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">1 Forecast</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">LightGBM predicts tomorrow’s solar and demand</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#8A93A3;width:40px;height:22px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#E3EEFC;border-radius:20px;padding:32px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">2 LLM agents</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">turn the sentence into exact rules</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#8A93A3;width:40px;height:22px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#E3F4EC;border-radius:20px;padding:32px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">3 Optimizer</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">MILP finds the cheapest 96-slot plan</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#8A93A3;width:40px;height:22px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#FCE9DD;border-radius:20px;padding:32px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">4 Verifier</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">checks physics, wishes and the answer</p>
+</div>
+<div style="display:flex;align-items:center"><x-shape kind="arrow-right" style="background:#8A93A3;width:40px;height:22px"></x-shape></div>
+<div style="flex:1;display:flex;flex-direction:column;gap:12px;background:#E8E9EE;border-radius:20px;padding:32px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">5 Score</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">replay the plan on the real weather</p>
+</div>
+</div>
+<div style="display:flex;gap:24px">
+<p style="flex:1;font-size:24px;line-height:1.4;color:#7A2E0E;background:#FCE9DD;border-radius:16px;padding:24px 28px"><b>If a check fails:</b> the plan goes back to the agents to be fixed (at most 3 replans). The answer is only given after it passes.</p>
+<p style="flex:1;font-size:24px;line-height:1.4;color:#0F1A2B;background:#ECEAE3;border-radius:16px;padding:24px 28px"><b>Each part does what it is good at:</b> language for the LLM, exact maths for the solver, reliable rule checks in plain code.</p>
+</div>
+<aside>This is our main idea. A forecaster predicts tomorrow. LLM agents read the request and set rules, like car leaves at 07:00 at 90 percent. A mathematical optimizer, a MILP, computes the cheapest schedule for every 15 minutes. A verifier written in plain code checks everything; if something is wrong, the plan goes back to the agents. Finally we replay the plan on the real weather of that day to score it fairly.</aside>
+</section>

@@ -1,0 +1,104 @@
+{
+  "created": "2026-10-24T15:38:58",
+  "site": {
+    "name": "Surat",
+    "latitude": 21.17,
+    "longitude": 72.83,
+    "timezone": "Asia/Kolkata"
+  },
+  "building": {
+    "type": "house"
+  },
+  "period": {
+    "start": "2024-02-01",
+    "end": "2026-09-30"
+  },
+  "days": 973,
+  "dropped_days": [],
+  "slot_minutes": 15,
+  "sources": {
+    "actual": "Open-Meteo archive API (ERA5 reanalysis, best match), hourly",
+    "forecast": "Open-Meteo previous-runs API, *_previous_day1, hourly",
+    "base_load": "synthetic (b2g/data/load_profiles.py), seeded",
+    "price": "tou"
+  },
+  "units": {
+    "ghi_*_wm2": "W/m2, mean over the slot (global horizontal irradiance)",
+    "temp_*_c": "degC at the slot midpoint",
+    "cloud_*_pct": "% at the slot midpoint",
+    "pv_*_kw": "kW, mean over the slot",
+    "base_load_kw": "kW, mean over the slot",
+    "price": "INR/kWh"
+  },
+  "price_unit": "INR/kWh",
+  "pv": {
+    "kwp": 5.0,
+    "derate": 0.8
+  },
+  "base_load": {
+    "daily_kwh_weekday": 10.0,
+    "daily_kwh_weekend": 12.0,
+    "weekend_days": [
+      5,
+      6
+    ],
+    "noise_std": 0.15,
+    "hourly_shape_weekday": [
+      0.45,
+      0.4,
+      0.4,
+      0.4,
+      0.45,
+      0.7,
+      1.2,
+      1.5,
+      1.3,
+      0.9,
+      0.7,
+      0.7,
+      0.75,
+      0.75,
+      0.7,
+      0.7,
+      0.8,
+      1.1,
+      1.6,
+      1.9,
+      1.9,
+      1.6,
+      1.1,
+      0.7
+    ],
+    "hourly_shape_weekend": [
+      0.5,
+      0.45,
+      0.4,
+      0.4,
+      0.4,
+      0.5,
+      0.8,
+      1.1,
+      1.4,
+      1.4,
+      1.2,
+      1.1,
+      1.1,
+      1.1,
+      1.0,
+      1.0,
+      1.0,
+      1.2,
+      1.6,
+      1.9,
+      1.9,
+      1.7,
+      1.2,
+      0.8
+    ]
+  },
+  "tariff": {
+    "source": "tou"
+  },
+  "seed": 42,
+  "note": "All physical and economic numbers are placeholders from b2g/config/default.yaml."
+}

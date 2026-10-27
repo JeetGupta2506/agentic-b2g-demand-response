@@ -7,7 +7,19 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import subprocess
 import os
+import sys
 import json
+from pathlib import Path
+from dotenv import load_dotenv
+
+# B2G change: read .env so /api/models sees LLM_API_BASE / LLM_API_KEY (the orchestrator already does)
+load_dotenv(Path(__file__).parent / '.env')
+
+
+def _windows_orchestrator_cmd(prompt, unbuffered=False):
+    """B2G change: on Windows 'bash' is WSL, so run the orchestrator with this venv's Python directly."""
+    return [sys.executable] + (['-u'] if unbuffered else []) + ['orchestrator_agent_react.py', prompt]
+
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for local development
@@ -38,13 +50,15 @@ def run_orchestrator():
 
         # Run orchestrator
         result = subprocess.run(
-            [
+            _windows_orchestrator_cmd(prompt) if os.name == 'nt' else [
                 'bash', '-c',
                 f'{venv_activate}python orchestrator_agent_react.py "{prompt}"'
             ],
             cwd=work_dir,
+            env={**os.environ, 'PYTHONUTF8': '1'},  # B2G change: ✓/⚠ output crashes cp1252 pipes on Windows
             capture_output=True,
             text=True,
+            encoding='utf-8',
             timeout=300  # 5 minute timeout
         )
 
@@ -88,9 +102,10 @@ def run_orchestrator_stream():
             # Set model as environment variable so orchestrator can use it
             env = os.environ.copy()
             env['CEREBRAS_MODEL_OVERRIDE'] = model
+            env['PYTHONUTF8'] = '1'  # B2G change: ✓/⚠ output crashes cp1252 pipes on Windows
 
             process = subprocess.Popen(
-                [
+                _windows_orchestrator_cmd(prompt, unbuffered=True) if os.name == 'nt' else [
                     'bash', '-c',
                     f'{venv_activate}python -u orchestrator_agent_react.py "{prompt}"'
                 ],
@@ -99,6 +114,7 @@ def run_orchestrator_stream():
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
+                encoding='utf-8',
                 bufsize=1,
                 universal_newlines=True
             )
@@ -149,18 +165,20 @@ def get_models():
         recently_used = [m for m in recently_used if m]  # Remove empty strings
 
         # Get API configuration from environment
-        api_key = os.getenv('CEREBRAS_API_KEY') or os.getenv('OPENAI_API_KEY') or os.getenv('LLM_API_KEY')
-        api_base = os.getenv('LLM_API_BASE', 'https://api.cerebras.ai')
-        provider = os.getenv('LLM_PROVIDER', 'cerebras')
+        # B2G change: same provider/key resolution as the orchestrator (b2g.agents.llm_client)
+        from b2g.agents.llm_client import LLMSettings
+        settings = LLMSettings.from_env()
+        api_key = settings.api_key or os.getenv('OPENAI_API_KEY')
+        provider = settings.provider
 
         if not api_key:
             return jsonify({
                 'success': False,
-                'error': 'No API key found. Set CEREBRAS_API_KEY, OPENAI_API_KEY, or LLM_API_KEY'
+                'error': f'No API key found. Set {provider.upper()}_API_KEY or LLM_API_KEY'
             }), 500
 
         # Build API endpoint
-        models_endpoint = f'{api_base}/v1/models'
+        models_endpoint = f'{settings.base_url}/models'
 
         # Fetch models from API
         response = requests.get(

@@ -20,6 +20,9 @@ try:
 except ImportError:
     CALENDAR_AVAILABLE = False
 
+# B2G change: every LLM call goes through the shared client (provider from .env, cache, retries, call log)
+from b2g.agents.llm_client import get_client
+
 
 def get_electricity_prices(date: Optional[str] = None, use_cached_prices: bool = False) -> Dict[str, Any]:
     """
@@ -648,11 +651,6 @@ Output format (JSON only):
             {"role": "user", "content": events_text}
         ]
 
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {CEREBRAS_API_KEY}"
-        }
-
         payload = {
             "model": model,
             "messages": messages,
@@ -660,15 +658,7 @@ Output format (JSON only):
             "max_tokens": 200
         }
 
-        response = requests.post(
-            "https://api.cerebras.ai/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=30
-        )
-        response.raise_for_status()
-
-        result = response.json()
+        result = get_client().complete(payload, timeout=30, tag="calendar")
         llm_response = result['choices'][0]['message']['content'].strip()
 
         # Parse JSON response
@@ -871,11 +861,6 @@ def call_appliance_agent(
         )
 
     # Call LLM with agent's system prompt
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {CEREBRAS_API_KEY}"
-    }
-
     messages = [
         {"role": "system", "content": system_prompt},
         {"role": "user", "content": f"{user_request}\n\nElectricity Price Data:\n{prices_text}{additional_context}"}
@@ -929,15 +914,7 @@ def call_appliance_agent(
     }
 
     # Make API call with tool support
-    response = requests.post(
-        "https://api.cerebras.ai/v1/chat/completions",
-        headers=headers,
-        json=payload,
-        timeout=60
-    )
-    response.raise_for_status()
-
-    result = response.json()
+    result = get_client().complete(payload, timeout=60, tag=f"agent:{appliance_id}")
 
     # Handle tool calls if present (with loop limit to prevent infinite calls)
     message = result['choices'][0]['message']
@@ -976,14 +953,7 @@ def call_appliance_agent(
 
         # Re-call LLM with tool results
         payload['messages'] = messages
-        response = requests.post(
-            "https://api.cerebras.ai/v1/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=60
-        )
-        response.raise_for_status()
-        result = response.json()
+        result = get_client().complete(payload, timeout=60, tag=f"agent:{appliance_id}:after_tools")
         message = result['choices'][0]['message']
         print(f"       Agent response after tool call received")
 

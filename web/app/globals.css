@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { background: #F7F8FA; color: #0B1220; }
+:focus-visible { outline: 3px solid #93B4FF; outline-offset: 2px; }
+section[id] { scroll-margin-top: 80px; }
+.recharts-cartesian-axis-tick-value { font-size: 12px; fill: #5B6577; }
+.recharts-legend-item-text { color: #334155 !important; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

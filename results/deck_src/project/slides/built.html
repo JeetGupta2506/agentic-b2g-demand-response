@@ -1,0 +1,42 @@
+<section id="built" data-transition="fade" style="background:#ECEAE3;color:#1A2333;font-family:'Inter', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#1F5FD1">What we built</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#0F1A2B">Eight milestones, one working system</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:24px">
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Baseline</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">Original system reproduced; one LLM client with logs and cache</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Real data</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">973 days of Surat weather and day-ahead forecasts</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Forecasting</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">LightGBM vs simple baselines, tested on 2026</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Physics</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">Battery, car, room temperature and power balance</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Optimizer</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">MILP plan for 96 slots under the 8 kW limit</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">LLM agents</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">Orchestrator + EV, battery and pre-cooling agents</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Verifier</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">Four groups of checks, up to 3 replans</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;background:#FFFEFB;border-radius:20px;padding:28px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Demo</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">Website with pre-run examples and live requests</p>
+</div>
+</div>
+<p style="position:absolute;left:128px;right:128px;bottom:64px;font-size:24px;color:#4A5262">Python · PuLP + CBC · LightGBM · Groq (Qwen 3.8 27B, temperature 0) · Next.js · 139 automated tests · runs on a laptop CPU</p>
+<aside>We built it in eight milestones. Highlight: real weather data for Surat, a forecaster, physics models of each device, the optimizer, the agents and the verifier, plus the demo. Everything is reproducible: LLM answers are logged and cached, and there are 139 automated tests. No GPU is needed.</aside>
+</section>

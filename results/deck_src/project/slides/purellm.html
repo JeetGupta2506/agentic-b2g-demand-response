@@ -1,0 +1,18 @@
+<section id="purellm" data-transition="fade" style="background:#F6F5F0;color:#1A2333;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#B42318">Results — the pure-LLM test</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#0F1A2B">Why not let the LLM do everything?</h2>
+</div>
+<div style="display:flex;gap:48px;align-items:start">
+<div style="flex:1;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:32px;line-height:1.4;color:#0F1A2B">Same request, same forecast, but the LLM writes the whole schedule itself.</p>
+<div style="display:flex;flex-direction:column;gap:4px">
+<p style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;color:#B42318">₹3,633</p>
+<p style="font-size:24px;line-height:1.35;color:#4A5262">total with penalties, vs ₹247 for our system</p>
+</div>
+<p style="font-size:24px;line-height:1.4;color:#4A5262">Its ₹85 bill looks cheap only because it did not do the job. Its own reasoning and its schedule disagreed.</p>
+</div>
+<img src="/_blob/6dc5f5b949c745228a008517ea2f4fba" alt="Pure LLM result: 51 physical rules broken, car 20 kWh short, room 30.2 °C; the verifier caught the car charging while away; its own reasoning contradicts its schedule" style="width:1165px;height:664px;object-fit:contain;background:#FDF0EF;border-radius:16px">
+</div>
+<aside>We tested the alternative: give the LLM the same request and forecast and let it write the full schedule. It broke 51 physical rules, for example charging the car while the car was away, left the car 20 kWh short and let the room reach 30 degrees. Its reasoning even said charge from 04:00 to 07:00, but its schedule did something else. This is the strongest argument for our design.</aside>
+</section>

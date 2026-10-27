@@ -1,0 +1,147 @@
+# B2G default configuration.
+# Every physical / economic number here is a PLACEHOLDER chosen to be plausible, not measured.
+# Change values here, never in code (CLAUDE.md hard rule). Record changes in docs/DECISIONS.md.
+
+seed: 42
+
+site:
+  name: Surat
+  latitude: 21.17
+  longitude: 72.83
+  timezone: Asia/Kolkata          # UTC+5:30, no daylight saving
+
+building:
+  type: house                     # one household (team decision 2026-10-24)
+
+data:
+  # Day-ahead weather forecasts (Open-Meteo previous-runs API) exist from 2024-01-20 for this site.
+  start_date: "2024-02-01"
+  end_date: "2026-09-30"
+  slot_minutes: 15                # 96 slots per day
+  raw_dir: data/b2g/raw           # downloaded API responses (cache, gitignored)
+  processed_dir: data/b2g/processed
+  figures_dir: results/figures
+
+weather:
+  # Open-Meteo hourly variables: shortwave_radiation = GHI (W/m2, mean over the PRECEDING hour);
+  # temperature_2m (degC) and cloud_cover (%) are instantaneous values at the hour.
+  variables: [shortwave_radiation, temperature_2m, cloud_cover]
+  forecast_lead_days: 1           # forecast issued ~24 h before (what a day-ahead planner knows)
+
+pv:
+  kwp: 5.0                        # PLACEHOLDER rooftop array size (kWp)
+  derate: 0.8                     # PLACEHOLDER system losses (inverter, temperature, soiling)
+
+base_load:
+  # Non-flexible household demand (lights, fridge, fans, cooking, devices).
+  # AC (pre-cooling), EV and battery are modelled separately and are NOT included here.
+  daily_kwh_weekday: 10.0         # PLACEHOLDER
+  daily_kwh_weekend: 12.0         # PLACEHOLDER
+  weekend_days: [5, 6]            # Monday=0 ... Saturday=5, Sunday=6
+  noise_std: 0.15                 # PLACEHOLDER relative noise per 15-min slot (seeded per day)
+  # Relative weight of each hour 00..23 (normalised in code). PLACEHOLDER shape:
+  # night low, morning peak, evening peak when people are home.
+  hourly_shape_weekday: [0.45, 0.40, 0.40, 0.40, 0.45, 0.70, 1.20, 1.50, 1.30, 0.90, 0.70, 0.70,
+                         0.75, 0.75, 0.70, 0.70, 0.80, 1.10, 1.60, 1.90, 1.90, 1.60, 1.10, 0.70]
+  hourly_shape_weekend: [0.50, 0.45, 0.40, 0.40, 0.40, 0.50, 0.80, 1.10, 1.40, 1.40, 1.20, 1.10,
+                         1.10, 1.10, 1.00, 1.00, 1.00, 1.20, 1.60, 1.90, 1.90, 1.70, 1.20, 0.80]
+
+# --- M4 physical models (all PLACEHOLDERS; units kW, kWh, degC; 15-min slots) ---------------
+
+battery:                          # home battery
+  capacity_kwh: 10.0
+  p_charge_max_kw: 5.0
+  p_discharge_max_kw: 5.0
+  eta_charge: 0.95
+  eta_discharge: 0.95
+  soc_min: 0.10                   # fraction of capacity
+  soc_max: 1.00
+  soc_initial: 0.50
+
+ev:                               # electric car (Nexon-EV class) on a home charger
+  capacity_kwh: 40.0
+  p_max_kw: 7.4                   # base paper's EV charger
+  eta_charge: 0.92
+  target_soc: 0.80                # must be reached by departure
+  departure: "08:00"              # weekdays: away 08:00-18:00
+  arrival: "18:00"
+  trip_kwh: 16.0                  # weekday round trip: leaves at 80 %, arrives at 40 %
+  weekend_at_home: true           # home all day on weekend_days (no deadline that day)
+
+thermal:                          # one cooled zone, linear 1R1C model
+  r_c_per_kw: 3.0                 # resistance to outdoor air (degC per kW of heat flow)
+  c_kwh_per_c: 8.0                # thermal mass (kWh per degC); R x C = 24 h time constant
+  cop: 3.3                        # 1.5-ton split AC: 1.6 kW electric -> ~5.3 kW cooling
+  p_cool_max_kw: 1.6              # electric
+  solar_gain_kw_per_kw_m2: 1.5    # heat gain per kW/m2 of GHI (windows, roof)
+  internal_gain_kw: 0.3           # people and devices while occupied
+  comfort_min_c: 24.0             # comfort band, enforced only while occupied
+  comfort_max_c: 27.0
+  t_min_c: 20.0                   # AC cannot cool below this (hard limit)
+  t_initial_c: 27.0
+  weekday_away: {start: "08:00", end: "18:00"}   # nobody home -> no comfort constraint
+  weekend_away: null              # home all day
+
+grid:
+  import_limit_kw: 8.0            # sanctioned load; EV + AC + base can exceed it (coupling)
+  export_price: 2.5               # credit per kWh exported, same currency as the tariff
+
+# --- M5 solver, systems and evaluation ------------------------------------------------------
+
+solver:
+  # Objective = electricity bought - export credit + the weighted terms below (all PLACEHOLDERS,
+  # money in the tariff's currency). Comfort and EV shortfall are soft so every day still solves.
+  w_peak: 1.0                     # per kW of the day's highest import (small; flattens the import)
+  w_battery_wear: 1.5             # per kWh charged + discharged (battery ageing)
+  w_comfort: 50.0                 # per degC*h outside the comfort band while occupied (or below t_min)
+  w_ev_unmet: 100.0               # per kWh missing at departure
+  battery_binary: auto            # auto = LP, re-solve with the charge/discharge binary only if needed;
+                                  # true = always binary (slow on some days); false = LP only
+  time_limit_s: 60
+  threads: 1                      # single thread -> reproducible solutions
+
+systems:
+  s2_pv_forecasters: [lgbm, physics]   # S2 runs once per PV forecaster (see M3 decision)
+  s2_load_forecaster: lgbm
+  s1_ev_respects_grid_limit: true      # team choice A (2026-10-24)
+
+evaluation:
+  m5_start: "2026-05-04"          # 7 test days, hot pre-monsoon week incl. a weekend
+  m5_days: 7
+
+forecasting:
+  # Chronological split (inclusive end dates). Each part contains a monsoon (Jun-Sep).
+  train_end: "2025-06-30"         # train: data start .. train_end
+  val_end: "2025-12-31"           # validation: choose LightGBM settings
+  test_end: "2026-09-30"          # test: final numbers + the M5-M8 test days
+  monsoon_months: [6, 7, 8, 9]
+  forecasts_file: data/b2g/processed/forecasts.csv
+  n_jobs: 4                       # LightGBM threads (fixed, for reproducible results)
+  early_stopping_rounds: 100
+  max_estimators: 3000
+  grid:                           # small search on the validation set
+    num_leaves: [15, 31, 63]
+    learning_rate: [0.03, 0.1]
+    min_child_samples: [20, 100]
+
+tariff:
+  source: tou                    # tou (default) | sample (repo's Austrian prices) | csv
+  tou:
+    unit: INR/kWh
+    # PLACEHOLDER time-of-day tariff: cheaper in solar hours, dearer in the evening peak.
+    # Shape loosely follows India's time-of-day tariff idea; the numbers are NOT a real tariff.
+    periods:
+      - {start: "00:00", end: "09:00", price: 7.0}
+      - {start: "09:00", end: "17:00", price: 5.6}   # solar hours (-20 %)
+      - {start: "17:00", end: "18:00", price: 7.0}
+      - {start: "18:00", end: "22:00", price: 8.4}   # evening peak (+20 %)
+      - {start: "22:00", end: "24:00", price: 7.0}
+  sample:
+    path: data/prices_sample.json # 96 values in EUR/MWh, repeated every day
+    unit: EUR/kWh
+  csv:
+    path: null                    # e.g. data/b2g/raw/iex_dam_15min.csv (download manually)
+    time_column: timestamp        # local time, start of each 15-min block
+    price_column: price
+    divisor: 1000                 # Rs/MWh -> Rs/kWh
+    unit: INR/kWh

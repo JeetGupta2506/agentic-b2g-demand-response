@@ -1,0 +1,27 @@
+<section id="demo" data-transition="fade" style="background:#ECEAE3;color:#1A2333;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#1F5FD1">Demo</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#0F1A2B">Live demo: ask the house</h2>
+</div>
+<div style="display:flex;gap:56px;align-items:start">
+<div style="flex:1;display:flex;flex-direction:column;gap:28px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">Run it</h3>
+<p style="font-family:'Courier New', monospace;font-size:28px;color:#F6F5F0;background:#0F1A2B;border-radius:12px;padding:20px 28px">python -m b2g.demo.server<br>→ open localhost:3000</p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<h3 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:32px;font-weight:700;color:#0F1A2B">What we will show</h3>
+<ol style="font-size:26px;line-height:1.45;color:#1A2333">
+<li>“Home all day”: press Run, watch the verifier force a replan</li>
+<li>“Early start”: four systems side by side, the pure-LLM failure</li>
+<li>Type a new request live and plan the day</li>
+</ol>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<img src="/_blob/5a1bdbef261b3c7f6309c8428e1db018" alt="Live request box on the website: a typed request, a day picker and the Plan my day button, with a live model badge" style="width:800px;height:307px;object-fit:contain;background:#FFFEFB;border-radius:16px">
+<p style="font-size:24px;line-height:1.35;color:#4A5262;width:800px">Any day from Jan to Sep 2026; planned in about 10–60 s (our test: 12 s). Pre-run examples also work offline.</p>
+</div>
+</div>
+<aside>Switch to the browser now. First, the Home all day example: press Run and the steps play back, including the failed verification and the replan. Then Smart vs simple on the early-start day to show the four systems and the pure-LLM failure. If there is internet, type a fresh request live. If the network fails, everything except live typing still works.</aside>
+</section>

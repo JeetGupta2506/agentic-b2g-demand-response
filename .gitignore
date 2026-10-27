@@ -13,6 +13,7 @@ __pycache__/
 .Python
 env/
 venv/
+.venv/
 ENV/
 *.egg-info/
 dist/
@@ -55,3 +56,14 @@ scripts_archive/
 
 # Test files
 test_*.py
+
+# B2G extension: keep our pytest suite and committed results (override rules above)
+!tests/test_*.py
+!results/*.csv
+results/runs/
+results/cache/
+data/b2g/raw/
+.pytest_cache/
+
+# Internal team document, not published
+B2G Project — Team Briefing.pdf

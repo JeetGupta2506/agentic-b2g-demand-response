@@ -1,0 +1,27 @@
+# B2G extension dependencies (install together with requirements.txt and requirements-api.txt)
+# More packages are added milestone by milestone (see docs/B2G_PLAN.md).
+
+# config.py imports dotenv, but the original requirements.txt does not list it
+python-dotenv>=1.0.0
+# milp-baseline/optimizer.py imports numpy, also missing from the original requirements.txt
+numpy>=1.26
+
+# M2 data pipeline
+pandas>=2.2
+pyyaml>=6.0
+matplotlib>=3.8
+
+# M3 forecaster
+lightgbm>=4.3
+
+# M5 solver (bundles the CBC MILP solver)
+pulp>=2.8,<4  # 3.x warns that LpVariable(...) / PULP_CBC_CMD change in 4.0
+
+# M6 agents: validate the agents' constraint JSON
+pydantic>=2.6
+
+# Tests
+pytest>=8.0.0
+
+# M8 demo app
+streamlit>=1.35

@@ -1,0 +1,16 @@
+<section id="gap" data-transition="fade" style="background:#F6F5F0;color:#1A2333;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:32px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#1F5FD1">The gap</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#0F1A2B">What the base paper left open</h2>
+<p style="font-size:24px;color:#4A5262">El Makroum, Zwickl-Bernhard &amp; Kranzl (2025): LLM agents choose start times for home appliances (Austria).</p>
+</div>
+<table style="font-size:26px;color:#1A2333">
+<tr><th style="width:30%;text-align:left">Base paper</th><th style="width:32%;text-align:left">The gap</th><th style="width:38%;text-align:left;color:#1F5FD1">Our answer</th></tr>
+<tr><td>The LLM picks the times itself</td><td>LLMs make number mistakes</td><td>The LLM sets rules; a MILP optimizer computes the schedule</td></tr>
+<tr style="background:#ECEAE3"><td>Prices only</td><td>No solar or weather forecast</td><td>LightGBM forecasts of Surat solar and demand</td></tr>
+<tr><td>Washer, dishwasher, EV, each alone</td><td>No battery, no cooling, no shared limit</td><td>EV + battery + pre-cooling planned together under 8 kW</td></tr>
+<tr style="background:#ECEAE3"><td>No checking</td><td>Wrong plans and explanations go unnoticed</td><td>A verifier checks everything and triggers replanning</td></tr>
+<tr><td>Judged on given prices</td><td>Forecast errors stay hidden</td><td>Plan on the forecast, score on the real weather</td></tr>
+</table>
+<aside>We built on an open-source 2025 paper. In it, the language model itself chooses appliance start times. Five gaps: the LLM does arithmetic it is bad at; there is no solar or weather forecast; no battery or cooling, and nothing makes devices fit under a shared grid limit; nothing checks the result; and plans are judged on the same prices they were made with. The right column is our answer to each gap.</aside>
+</section>

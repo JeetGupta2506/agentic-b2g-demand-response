@@ -13,6 +13,7 @@ from typing import Dict, Any, List, Optional
 
 from tools import get_electricity_prices, call_appliance_agent, schedule_appliance, get_calendar_ev_constraint, calculate_window_sums
 from config import CEREBRAS_API_KEY, CEREBRAS_MODEL, TEMPERATURE, AVAILABLE_APPLIANCES
+from b2g.agents.llm_client import get_client
 from security import validate_and_prepare_input
 
 
@@ -28,9 +29,9 @@ class OrchestratorAgentReAct:
         # Allow model override from environment (set by API)
         self.model = os.environ.get('CEREBRAS_MODEL_OVERRIDE', CEREBRAS_MODEL)
         self.temperature = TEMPERATURE
-        self.base_url = "https://api.cerebras.ai/v1"
+        self.base_url = get_client().settings.base_url  # B2G change: provider set in .env (default Cerebras)
 
-        print(f"[Orchestrator] Using model: {self.model}")
+        print(f"[Orchestrator] Using model: {self.model} via {self.base_url}")
 
     def _create_system_prompt(self) -> str:
         """Create system prompt with ReAct pattern instructions."""
@@ -155,11 +156,6 @@ ACTION: FINISH | summary=I've optimized schedules for 4 appliances: ...
 
     def _call_llm(self, messages: List[Dict[str, Any]]) -> str:
         """Call the LLM and return response text."""
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.api_key}"
-        }
-
         payload = {
             "model": self.model,
             "messages": messages,
@@ -168,15 +164,8 @@ ACTION: FINISH | summary=I've optimized schedules for 4 appliances: ...
             "stream": False
         }
 
-        response = requests.post(
-            f"{self.base_url}/chat/completions",
-            headers=headers,
-            json=payload,
-            timeout=120
-        )
-        response.raise_for_status()
-
-        result = response.json()
+        # B2G change: shared client (cache, retries, call log) instead of a direct Cerebras request
+        result = get_client().complete(payload, timeout=120, tag="orchestrator")
         return result['choices'][0]['message']['content'], result.get('usage', {})
 
     def _parse_action(self, response: str) -> Optional[Dict[str, Any]]:
@@ -499,7 +488,7 @@ ACTION: FINISH | summary=I've optimized schedules for 4 appliances: ...
         }
 
         # Save to model-specific subfolder
-        model_folder = f"data/runs/{self.model}"
+        model_folder = f"data/runs/{self.model.replace(':', '_')}"  # B2G change: ':' (OpenRouter ':free') is invalid on Windows
         os.makedirs(model_folder, exist_ok=True)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filepath = f"{model_folder}/run_{timestamp}.json"

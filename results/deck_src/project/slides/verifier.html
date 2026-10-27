@@ -1,0 +1,20 @@
+<section id="verifier" data-transition="fade" style="background:#F6F5F0;color:#1A2333;font-family:'Inter', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:40px">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font-size:24px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:#1F5FD1">The verifier at work</p>
+<h2 style="font-family:'Space Grotesk', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#0F1A2B">Caught: a setting nobody asked for</h2>
+</div>
+<div style="display:flex;gap:64px;align-items:start">
+<div style="flex:1;display:flex;flex-direction:column;gap:24px">
+<p style="font-size:32px;font-style:italic;line-height:1.4;color:#0F1A2B;border-left:6px solid #1F5FD1;padding:4px 0 4px 28px">“I’m working from home all day tomorrow, please keep the house at most 25 degrees.”</p>
+<ol style="font-size:32px;line-height:1.4;color:#1A2333">
+<li>The pre-cooling agent also set a minimum of 22 °C on its own.</li>
+<li>The verifier rejected it: not supported by the request.</li>
+<li>The agent removed it; the second check passed.</li>
+<li>The person was told honestly: the room may reach 26.9 °C.</li>
+</ol>
+<p style="font-size:24px;line-height:1.4;color:#4A5262;background:#ECEAE3;border-radius:16px;padding:20px 28px">Four groups of checks: physics, the person’s wishes, the request itself, and every number in the final answer.</p>
+</div>
+<img src="/_blob/e89143ea483e08ddb553577c36e2ea2d" alt="Agent steps 3 to 6: the pre-cooling agent sets 22 to 25 °C, the optimizer runs, verification fails because comfort_min_c 22 is not supported, and the agent is asked again" style="width:358px;height:664px;object-fit:contain;background:#E3E1D9;border-radius:16px;border:1px solid #DEDBD2">
+</div>
+<aside>A real run, not staged. The language model invented a minimum temperature of 22 degrees. The verifier is plain code: it compares every rule with what the person actually said, rejected the invented value, and sent it back. The agent fixed it and the plan passed. This is why we never trust the LLM’s output without checking it.</aside>
+</section>
