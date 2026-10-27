@@ -14,9 +14,9 @@ The system plans the next day of a solar-powered house in 15-minute steps: when 
 
 | Name | Roll number |
 |---|---|
-| Jeet Gupta | [roll number] |
-| Driti Rathod | [roll number] |
-| Kavisha Vaja | [roll number] |
+| Jeet Gupta | U23AI056 |
+| Driti Rathod | U23AI036 |
+| Kavisha Vaja | U23AI016 |
 
 Guide: [faculty name] · Course: [course name]
 
